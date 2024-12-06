@@ -1,4 +1,4 @@
-package Chinese_checkers.src.main.java.zak380mGazyli;
+package zak380mGazyli;
 
 public class ClassicBoard implements Board {
     @Override
