@@ -1,4 +1,4 @@
-package zak380mGazyli.Board;
+package zak380mGazyli.Boards;
 
 public interface Board {
     void display();

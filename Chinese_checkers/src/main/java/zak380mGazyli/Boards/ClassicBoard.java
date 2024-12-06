@@ -1,4 +1,4 @@
-package zak380mGazyli.Board;
+package zak380mGazyli.Boards;
 
 public class ClassicBoard implements Board {
     @Override
