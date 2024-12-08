@@ -5,12 +5,12 @@ import zak380mGazyli.Boards.*;
 public class DummyGamemode implements Gamemode {
 
     @Override
-    public boolean validateMove(int[] startPos, int[] endPos, Board board) {
+    public boolean validateMove(int startX, int startY, int endX, int endY, Board board) {
         return true;
     }
 
     @Override
-    public void processMove(int[] startPos, int[] endPos, Board board) {
-        board.updateBoard(startPos, endPos);
+    public void processMove(int startX, int startY, int endX, int endY, Board board) {
+        board.updateBoard(startX, startY, endX, endY);
     }
 }

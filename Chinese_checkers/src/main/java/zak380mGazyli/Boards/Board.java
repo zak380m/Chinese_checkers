@@ -4,7 +4,7 @@ import zak380mGazyli.Cells.Cell;
 
 public interface Board {
     Cell[][] getBoard();
-    void updateBoard(int StartPos, int EndPos);
+    void updateBoard(int startX, int startY, int endX, int endY);
     void displayBoard();
 }
 

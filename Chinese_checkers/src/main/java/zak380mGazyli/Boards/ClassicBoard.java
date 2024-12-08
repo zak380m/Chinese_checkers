@@ -25,7 +25,7 @@ public class ClassicBoard implements Board {
     }
 
     @Override
-    public void updateBoard(int StartPos, int EndPos) {
+    public void updateBoard(int startX, int startY, int endX, int endY) {
         // Implementation for swapping two cells
     }
 
