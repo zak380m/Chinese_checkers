@@ -1,4 +1,4 @@
-package zak380mGazyli.GameModes;
+package zak380mGazyli.Gamemodes;
 
 import zak380mGazyli.Boards.*;
 
