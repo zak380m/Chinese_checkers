@@ -1,5 +1,7 @@
 package zak380mGazyli.Displays;
 
+import zak380mGazyli.Cells.Cell;
+
 public interface Display {
-    void displayBoard(String[][] board);  // Display the board to the user
+    public void displayBoard(Cell[][] board); 
 }
