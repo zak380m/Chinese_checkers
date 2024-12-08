@@ -4,12 +4,13 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
-import zak380mGazyli.GameModes.*;
+
 import zak380mGazyli.Boards.*;
+import zak380mGazyli.Gamemodes.*;
 
 public class Server {
     private List<ClientHandler> clients = new ArrayList<>();
-    private GameMode gameMode = new DummyGameMode();  
+    private GameMode gameMode = new DummyGamemode();  
     private Board board = new ClassicBoard();
 
     public static void main(String[] args) throws IOException {
