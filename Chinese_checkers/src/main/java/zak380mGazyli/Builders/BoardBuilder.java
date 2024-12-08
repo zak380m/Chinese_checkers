@@ -1,6 +1,8 @@
-package zak380mGazyli.Boards;
+package zak380mGazyli.Builders;
+
+import zak380mGazyli.Boards.Board;
 
 public interface BoardBuilder {
-    public void buildBoard(int players);
-    public Board getBoard();
+    void buildBoard(int players);
+    Board getBoard();
 }

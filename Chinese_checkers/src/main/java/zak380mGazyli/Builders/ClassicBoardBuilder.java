@@ -1,4 +1,7 @@
-package zak380mGazyli.Boards;
+package zak380mGazyli.Builders;
+
+import zak380mGazyli.Boards.Board;
+import zak380mGazyli.Boards.ClassicBoard;
 
 public class ClassicBoardBuilder implements BoardBuilder {
     private final Board board;
@@ -9,7 +12,19 @@ public class ClassicBoardBuilder implements BoardBuilder {
 
     @Override
     public void buildBoard(int players) {
-        System.out.println("Classic board");
+        switch (players) {
+            case 2:
+                // Logic for creating boards for different player amounts
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 6:
+                break;
+            default:
+        }
+
     }
 
     @Override
