@@ -4,14 +4,11 @@ import zak380mGazyli.Boards.Board;
 import zak380mGazyli.Boards.ClassicBoard;
 
 public class ClassicBoardBuilder implements BoardBuilder {
-    private final Board board;
-
-    public ClassicBoardBuilder() {
-        this.board = new ClassicBoard();
-    }
+    private Board board;
 
     @Override
     public void buildBoard(int players) {
+        this.board = new ClassicBoard();
         switch (players) {
             case 2:
                 // Logic for creating boards for different player amounts
