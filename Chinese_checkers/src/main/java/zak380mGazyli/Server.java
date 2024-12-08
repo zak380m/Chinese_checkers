@@ -6,20 +6,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 import zak380mGazyli.Boards.*;
+import zak380mGazyli.Builders.GamemodeBuilders.*;
+import zak380mGazyli.Cells.Cell;
+import zak380mGazyli.Builders.BoardBuilders.*;
 import zak380mGazyli.Gamemodes.*;
 
 public class Server {
+    private GamemodeBuilder gamemodeBuilder = new DummyGamemodeBuilder();
+    private BoardBuilder boardBuilder = new ClassicBoardBuilder();
     private List<ClientHandler> clients = new ArrayList<>();
-    private GameMode gameMode = new DummyGamemode();  
-    private Board board = new ClassicBoard();
+    private Gamemode gamemode;  
+    private Board board;
 
     public static void main(String[] args) throws IOException {
         new Server().startServer();
     }
 
     public void startServer() throws IOException {
+        gamemodeBuilder.buildGamemode();
+        gamemode = gamemodeBuilder.getGamemode();
+        boardBuilder.buildBoard(2);
+        board = boardBuilder.getBoard();
         ServerSocket serverSocket = new ServerSocket(5555);
-        board.initializeBoard();
 
         System.out.println("Server started on port 5555.");
 
@@ -32,9 +40,9 @@ public class Server {
         }
     }
 
-    public synchronized void processMove(int[] startPos, int[] endPos) {
-        if (gameMode.validateMove(startPos, endPos, board)) {
-            gameMode.processMove(startPos, endPos, board);
+    public synchronized void processMove(int startX, int startY, int endX, int endY) {
+        if (gamemode.validateMove(startX, startY, endX, endY, board)) {
+            gamemode.processMove(startX, startY, endX, endY, board);
             broadcastBoard();
         }
     }
@@ -64,16 +72,18 @@ class ClientHandler implements Runnable {
             in = new ObjectInputStream(socket.getInputStream());
 
             while (true) {
-                int[] startPos = (int[]) in.readObject();
-                int[] endPos = (int[]) in.readObject();
-                server.processMove(startPos, endPos);
+                int startX = (int) in.readInt();
+                int startY = (int) in.readInt();
+                int endX = (int) in.readInt();
+                int endY = (int) in.readInt();
+                server.processMove(startX, startY, endX, endY);
             }
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void sendBoard(String[][] board) {
+    public void sendBoard(Cell[][] board) {
         try {
             out.writeObject(board);
             out.flush();

@@ -1,12 +1,14 @@
 package zak380mGazyli.Displays;
 
+import zak380mGazyli.Cells.Cell;
+
 public class CLIDisplay implements Display {
     
     @Override
-    public void displayBoard(String[][] board) {
-        for (String[] row : board) {
-            for (String cell : row) {
-                System.out.print(cell + " ");
+    public void displayBoard(Cell[][] board) {
+        for (Cell[] row : board) {
+            for (Cell cell : row) {
+                System.out.print(cell.getColor() + "O ");
             }
             System.out.println();
         }

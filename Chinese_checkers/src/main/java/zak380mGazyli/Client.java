@@ -3,6 +3,8 @@ package zak380mGazyli;
 import java.io.*;
 import java.net.*;
 import java.util.Scanner;
+
+import zak380mGazyli.Cells.Cell;
 import zak380mGazyli.Displays.*;
 
 public class Client {
@@ -25,7 +27,7 @@ public class Client {
         new Thread(() -> {
             try {
                 while (true) {
-                    String[][] board = (String[][]) in.readObject();
+                    Cell[][] board = (Cell[][]) in.readObject();
                     display.displayBoard(board);
                 }
             } catch (IOException | ClassNotFoundException e) {
@@ -33,7 +35,6 @@ public class Client {
             }
         }).start();
 
-        // Send moves from console
         sendMoves();
     }
 
@@ -47,8 +48,10 @@ public class Client {
             int endY = scanner.nextInt();
 
             try {
-                out.writeObject(new int[]{startX, startY});
-                out.writeObject(new int[]{endX, endY});
+                out.writeInt(startX);
+                out.writeInt(startY);
+                out.writeInt(endX);
+                out.writeInt(endY);
                 out.flush();
             } catch (IOException e) {
                 e.printStackTrace();
