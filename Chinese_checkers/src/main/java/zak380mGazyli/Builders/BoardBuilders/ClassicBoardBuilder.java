@@ -1,4 +1,4 @@
-package zak380mGazyli.Builders;
+package zak380mGazyli.Builders.BoardBuilders;
 
 import zak380mGazyli.Boards.Board;
 import zak380mGazyli.Boards.ClassicBoard;
