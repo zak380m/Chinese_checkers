@@ -1,16 +1,69 @@
 package zak380mGazyli.Displays;
 
-import zak380mGazyli.Cells.Cell;
+import java.util.Scanner;
+
+import com.google.gson.Gson;
+
+import zak380mGazyli.GameState;
+import zak380mGazyli.Command;
+import zak380mGazyli.Messages.ErrorMessage;
 
 public class CLIDisplay implements Display {
-    
+
+    private Scanner scanner;
+
+    public CLIDisplay() {
+        scanner = new Scanner(System.in);
+    }
+
     @Override
-    public void displayBoard(Cell[][] board) {
-        for (Cell[] row : board) {
-            for (Cell cell : row) {
-                System.out.print(cell.getColor() + "O ");
+    public void displayInterface(String jsonResponse) {
+        Gson gson = new Gson();
+        try {
+            GameState gameState = gson.fromJson(jsonResponse, GameState.class);
+            System.out.println("Turns until your move: " + gameState.getTurnsBeforePlayer());
+        } catch (Exception e) {
+            ErrorMessage errorMessage = new ErrorMessage(jsonResponse);
+            System.out.println("Error: " + errorMessage.getError() + "\n" + e.getMessage());
+        }
+    }
+
+    @Override
+    public String getCommands() {
+        Gson gson = new Gson();
+
+        System.out.println("Enter command (move, display, quit):");
+        while(true) {
+            if(scanner.hasNextLine()) {
+                break;
             }
-            System.out.println();
+        }
+        String command = scanner.nextLine();
+        try {
+            switch (command) {
+                case "move":
+                    System.out.println("Enter startX, startY, endX, endY:");
+                    int startX = scanner.nextInt();
+                    int startY = scanner.nextInt();
+                    int endX = scanner.nextInt();
+                    int endY = scanner.nextInt();
+                    scanner.nextLine(); 
+                    Command moveCommand = new Command("move", new int[]{startX, startY, endX, endY});
+                    return gson.toJson(moveCommand);
+                case "display":
+                    Command displayCommand = new Command("display");
+                    return gson.toJson(displayCommand);
+                case "quit":
+                    Command quitCommand = new Command("quit");
+                    System.out.println("Quitting the game...");
+                    return gson.toJson(quitCommand);
+                default:
+                    Command unknownCommand = new Command("Unknown command.");
+                    return gson.toJson(unknownCommand);
+                }
+        } catch (Exception e) {
+            Command invalidCommand = new Command("Invalid input.");
+            return gson.toJson(invalidCommand);
         }
     }
 }
