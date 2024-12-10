@@ -5,13 +5,13 @@ import zak380mGazyli.Cells.ClassicBoardCell;
 import zak380mGazyli.Misc.Color;
 
 public class ClassicBoard implements Board {
-    private final Cell[][] cells;
+    private final ClassicBoardCell[][] cells;
     private final String cell_sign = "0";
     private final int x_size = 10; // Placeholder board size
     private final int y_size = 10; // Placeholder board size
 
     public ClassicBoard() {
-        this.cells = new Cell[x_size][y_size];
+        this.cells = new ClassicBoardCell[x_size][y_size];
         for (int i = 0; i < x_size; i++) { // Placeholder board creation (currently a square)
             for (int j = 0; j < y_size; j++) {
                 this.cells[i][j] = new ClassicBoardCell();
@@ -20,7 +20,7 @@ public class ClassicBoard implements Board {
     }
 
     @Override
-    public Cell[][] getBoard() {
+    public ClassicBoardCell[][] getBoard() {
         return cells;
     }
 
