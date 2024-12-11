@@ -59,15 +59,31 @@ public class Server {
         }
     }
 
+    public synchronized void broadcastToAllExceptOne(String jsonToBroadcast, int playerNumber) {
+        for (PlayerHandler player : players) {
+            if (player.getPlayerNumber() != playerNumber) {
+                player.sendJsonReply(jsonToBroadcast);
+            }
+        }
+    }
+
+    public synchronized void sendToAPlayer(String jsonToSend, int playerNumber) {
+        for (PlayerHandler player : players) {
+            if (player.getPlayerNumber() == playerNumber) {
+                player.sendJsonReply(jsonToSend);
+            }
+        }
+    }
+
     public synchronized void broadcastCurrentGameState() {
         for (PlayerHandler player : players) {
-            player.sendCurrentGameState(currentGameState(player.getPlayerNumber()));
+            player.sendJsonReply(currentGameState(player.getPlayerNumber()));
         }
     }
 
     public String currentGameState(int playerNumber) {
         Gson gson = new Gson();
-        GameState data = new GameState(board.getBoard(), (playerNumber - gamemode.getTurn() + numberOfPlayers) % numberOfPlayers);
+        GameState data = new GameState(board.getBoard(), (playerNumber - gamemode.getTurn() + numberOfPlayers) % numberOfPlayers, (gamemode.getTurn()-1+numberOfPlayers)%numberOfPlayers);
         return gson.toJson(data);
     }
 
@@ -78,6 +94,10 @@ public class Server {
     public Gamemode getGamemode() {
         return gamemode;
     }
+
+    public int getNumberOfPlayers() {
+        return numberOfPlayers;
+    }  
 
     public void setUpGamemode(String gamemodeName, int playerCount) {
         System.out.println("Setting up gamemode: " + gamemodeName);
@@ -92,7 +112,6 @@ public class Server {
         this.settingUp = false;
         System.out.println("Gamemode set up is done.");
     }
-        
 }
 
 class PlayerHandler implements Runnable {
@@ -103,6 +122,7 @@ class PlayerHandler implements Runnable {
     private Gamemode gamemode;
     private int playerNumber;
     private Boolean isConnected;
+    private Gson gson;
 
     public PlayerHandler(Socket socket, Server server, int playerNumber) {
         this.socket = socket;
@@ -114,6 +134,7 @@ class PlayerHandler implements Runnable {
         }
         this.playerNumber = playerNumber;   
         this.isConnected = true;
+        this.gson = new Gson();
     }
 
     @Override
@@ -123,28 +144,13 @@ class PlayerHandler implements Runnable {
             in = new ObjectInputStream(socket.getInputStream());
             Gson gson = new Gson();
             if(gamemode == null) {
-                setUpGamemode();
                 while (isConnected && gamemode == null) {
-                    String jsonString = (String) in.readObject(); 
-                    Command command = gson.fromJson(jsonString, Command.class);
-    
-                    System.out.println("Player " + playerNumber + " sent command: " + command.getName());
-    
-                    switch (command.getName()) {
-                        case "setUpGamemode":
-                            server.setUpGamemode("DummyGame", 2);
-                            gamemode = server.getGamemode();
-                            break;
-                        default:
-                            sendErrorMessage("Send setUpGameMode.");
-                            break;
-                    }
+                    setUpGamemode();
                 }
             }
             while (isConnected) {
                 String jsonString = (String) in.readObject(); 
                 Command command = gson.fromJson(jsonString, Command.class);
-
                 System.out.println("Player " + playerNumber + " sent command: " + command.getName());
 
                 switch (command.getName()) {
@@ -166,15 +172,27 @@ class PlayerHandler implements Runnable {
                             sendErrorMessage("Invalid number of arguments for move.");
                         }
                         break;
-
                     case "display":
-                        sendCurrentGameState(server.currentGameState(playerNumber));
+                        sendJsonReply(server.currentGameState(playerNumber));
                         break;
-
                     case "quit":
                         handleDisconnection();
                         break;
-
+                    case "message":
+                        if (command.getArgs().length == 1 && command.getTextArg() != null) {
+                            if (command.getArgs()[0] == -1) {
+                                server.broadcastToAllExceptOne(gson.toJson(new Message(command.getTextArg() + " FROM PLAYER: " + playerNumber)), playerNumber);
+                            } else {
+                                if(command.getArgs()[0] >= 0 && command.getArgs()[0] < server.getNumberOfPlayers()) {
+                                    server.sendToAPlayer(gson.toJson(new Message(command.getTextArg() + " FROM PLAYER: " + playerNumber)), command.getArgs()[0]);
+                                } else {
+                                    sendErrorMessage("Invalid player number.");
+                                }
+                            }
+                        } else {
+                            sendErrorMessage("Invalid number of arguments for message.");
+                        }
+                        break;
                     default:
                         sendErrorMessage("Unknown command.");
                         break;
@@ -197,9 +215,9 @@ class PlayerHandler implements Runnable {
         }
     }
 
-    public void sendCurrentGameState(String currentGameState) {
+    public void sendJsonReply(String jsonReply) {
         try {
-            out.writeObject(currentGameState);
+            out.writeObject(jsonReply);
             out.flush();
         } catch (IOException e) {
             e.printStackTrace();
@@ -222,11 +240,22 @@ class PlayerHandler implements Runnable {
 
     private void setUpGamemode() {
         try {
-            Gson gson = new Gson();
-            out.writeObject(gson.toJson(new Message("setUpGamemode")));
+            out.writeObject(gson.toJson(new Message("Send setUpGameMode.")));
             out.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
+            String jsonString = (String) in.readObject(); 
+            Command command = gson.fromJson(jsonString, Command.class);
+            System.out.println("Player " + playerNumber + " sent command: " + command.getName());
+            switch (command.getName()) {
+                case "setUpGamemode":
+                    server.setUpGamemode("DummyGame", command.getArgs()[0]);
+                    gamemode = server.getGamemode();
+                    break;
+                default:
+                    sendErrorMessage("Try again, invalid setup.");
+                break;
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            sendErrorMessage(gson.toJson(new ErrorMessage(e.getMessage())));
         }
     }
 }

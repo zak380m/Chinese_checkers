@@ -48,6 +48,9 @@ public class CLIDisplay implements Display {
         commandHandlers.put("setupgamemode", this::handleSetUpGamemodeCommand);
         commandDescriptions.put("setUpGamemode", "Set up the game mode.");
 
+        commandHandlers.put("message", this::handleMessageCommand);
+        commandDescriptions.put("message", "Send message to player/s.");
+
         commandHandlers.put("help", this::handleHelpCommand);
         commandDescriptions.put("help", "List and explain all available commands.");
     }
@@ -59,9 +62,10 @@ public class CLIDisplay implements Display {
             if (jsonResponse.contains("boardState")) {
                 GameState gameState = gson.fromJson(jsonResponse, GameState.class);
                 displayBoard(gameState.getBoardState());
+                System.out.println("Player " + gameState.getWhoMoved() + " just moved.");
                 System.out.println("Turns until your move: " + gameState.getTurnsBeforePlayer());
             }
-            else if (jsonResponse.contains("errorMessage")) {
+            else if (jsonResponse.contains("error")) {
                 ErrorMessage errorMessage = gson.fromJson(jsonResponse, ErrorMessage.class);
                 System.out.println("Error: " + errorMessage.getError());
             }
@@ -124,8 +128,17 @@ public class CLIDisplay implements Display {
     }
 
     private String handleSetUpGamemodeCommand() {
-        Command setUpGamemodeCommand = new Command("setUpGamemode");
-        return gson.toJson(setUpGamemodeCommand);
+        try {
+            System.out.println("Enter gamemodeName, numberOfPlayers:");
+            String gamemodeName = scanner.nextLine();
+            int numberOfPlayers = scanner.nextInt();
+            scanner.nextLine();  
+            Command setUpGamemodeCommand = new Command("setUpGamemode", new int[] { numberOfPlayers }, gamemodeName);
+            return gson.toJson(setUpGamemodeCommand);
+        } catch (Exception e) {
+            scanner.nextLine();
+            return gson.toJson(new Command("Invalid command."));
+        }
     }
 
     private String handleHelpCommand() {
@@ -134,6 +147,20 @@ public class CLIDisplay implements Display {
             System.out.println(command + ": " + commandDescriptions.get(command));
         }
         return getCommands();
+    }
+
+    private String handleMessageCommand() {
+        try {
+            System.out.println("Enter message, playerNumber(or -1 for all):");
+            String message = scanner.nextLine();
+            int playerNumber = scanner.nextInt();
+            scanner.nextLine();  
+            Command setMessageCommand = new Command("message", new int[] { playerNumber }, message);
+            return gson.toJson(setMessageCommand);
+        } catch (Exception e) {
+            scanner.nextLine();
+            return gson.toJson(new Command("Invalid command."));
+        }
     }
 
     @Override
