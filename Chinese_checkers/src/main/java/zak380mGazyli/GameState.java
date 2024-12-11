@@ -1,6 +1,5 @@
 package zak380mGazyli;
 
-import zak380mGazyli.Boards.ClassicBoard;
 import zak380mGazyli.Cells.ClassicBoardCell;
 
 public class GameState {

@@ -60,6 +60,7 @@ public class Client {
     private void quit() {
         isConnected = false;
         System.out.println("Client is quitting...");
+        display.quit();
 
         try {
             if (socket != null && !socket.isClosed()) {

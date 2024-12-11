@@ -7,7 +7,7 @@ public class DummyGamemodeBuilder implements GamemodeBuilder {
     private Gamemode gamemode;
 
     @Override
-    public void buildGamemode() {
+    public void buildGamemode(int numberOfPlayers) {
         this.gamemode = new DummyGamemode();
     }
 
