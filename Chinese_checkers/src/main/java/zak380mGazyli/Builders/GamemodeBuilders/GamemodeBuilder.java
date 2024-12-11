@@ -3,6 +3,6 @@ package zak380mGazyli.Builders.GamemodeBuilders;
 import zak380mGazyli.Gamemodes.Gamemode;
 
 public interface GamemodeBuilder {
-    void buildGamemode();
+    void buildGamemode(int numberOfPlayers);
     Gamemode getGamemode();
 }
