@@ -32,7 +32,7 @@ public class ClassicBoardBuilder implements BoardBuilder {
                 board.colorTriangle(3, Color.YELLOW);
                 board.colorTriangle(4, Color.BLUE);
                 board.colorTriangle(5, Color.GREEN);
-                board.colorTriangle(6, Color.GREY);
+                board.colorTriangle(6, Color.CYAN);
                 break;
             default:
         }

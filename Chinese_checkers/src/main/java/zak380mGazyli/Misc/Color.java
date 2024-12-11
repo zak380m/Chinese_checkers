@@ -10,6 +10,7 @@ public class Color {
     public static final String YELLOW = "YELLOW";
     public static final String BLUE = "BLUE";
     public static final String MAGENTA = "MAGENTA";
+    public static final String CYAN = "CYAN";
     public static final String GREY = "GREY";
 
     private static final Map<String, String> colorMap = new HashMap<>();
@@ -21,6 +22,7 @@ public class Color {
         colorMap.put(YELLOW, "\u001B[33m");
         colorMap.put(BLUE, "\u001B[34m");
         colorMap.put(MAGENTA, "\u001B[35m");
+        colorMap.put(CYAN, "\u001B[36m");
         colorMap.put(GREY, "\u001B[90m");
     }
 
