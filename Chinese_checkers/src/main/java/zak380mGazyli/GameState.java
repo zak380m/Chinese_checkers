@@ -1,17 +1,17 @@
 package zak380mGazyli;
 
-import zak380mGazyli.Cells.ClassicBoardCell;
+import zak380mGazyli.Cells.Cell;
 
 public class GameState {
-    private ClassicBoardCell[][] boardState;
+    private Cell[][] boardState;
     private int turnsBeforePlayer;
 
-    public GameState(ClassicBoardCell[][] boardState, int turnsBeforePlayer) {
+    public GameState(Cell[][] boardState, int turnsBeforePlayer) {
         this.boardState = boardState;
         this.turnsBeforePlayer = turnsBeforePlayer;
     }
 
-    public ClassicBoardCell[][] getBoardState() {
+    public Cell[][] getBoardState() {
         return boardState;
     }
 

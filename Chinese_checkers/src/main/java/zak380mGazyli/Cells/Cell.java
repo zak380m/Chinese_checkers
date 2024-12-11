@@ -1,6 +1,15 @@
 package zak380mGazyli.Cells;
 
-public interface Cell {
-    void setColor(String colorName);
-    String getColor();
+import zak380mGazyli.Misc.Color;
+
+public class Cell {
+    private String colorName = Color.WHITE;
+
+    public void setColor(String colorName) {
+        this.colorName = colorName;
+    }
+
+    public String getColor() {
+        return this.colorName;
+    }
 }
