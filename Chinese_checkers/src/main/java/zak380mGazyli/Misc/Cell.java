@@ -1,6 +1,4 @@
-package zak380mGazyli.Cells;
-
-import zak380mGazyli.Misc.Color;
+package zak380mGazyli.Misc;
 
 public class Cell {
     private String cellSymbol;

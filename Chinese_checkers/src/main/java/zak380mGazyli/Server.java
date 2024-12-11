@@ -12,6 +12,7 @@ import zak380mGazyli.Builders.GamemodeBuilders.*;
 import zak380mGazyli.Builders.GameBuilder;
 import zak380mGazyli.Builders.BoardBuilders.*;
 import zak380mGazyli.Gamemodes.*;
+import zak380mGazyli.Messages.Command;
 import zak380mGazyli.Messages.ErrorMessage;
 import zak380mGazyli.Messages.Message;
 

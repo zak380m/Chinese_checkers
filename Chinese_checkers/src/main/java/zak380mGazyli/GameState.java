@@ -1,6 +1,6 @@
 package zak380mGazyli;
 
-import zak380mGazyli.Cells.Cell;
+import zak380mGazyli.Misc.Cell;
 
 public class GameState {
     private Cell[][] boardState;

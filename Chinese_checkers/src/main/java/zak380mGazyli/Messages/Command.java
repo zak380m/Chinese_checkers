@@ -1,4 +1,4 @@
-package zak380mGazyli;
+package zak380mGazyli.Messages;
 
 public class Command {
     private String name;

@@ -1,6 +1,6 @@
 package zak380mGazyli.Boards;
 
-import zak380mGazyli.Cells.Cell;
+import zak380mGazyli.Misc.Cell;
 import zak380mGazyli.Misc.Color;
 
 public class ClassicBoard implements Board {
