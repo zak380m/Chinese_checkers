@@ -5,6 +5,16 @@ import zak380mGazyli.Boards.*;
 public class DummyGamemode implements Gamemode {
 
     private int turn = 0;
+    private int numberOfPlayers = 1;
+
+    @Override
+    public boolean setNumberOfPlayers(int numberOfPlayers) {
+        if(numberOfPlayers < 2 || numberOfPlayers > 6 || numberOfPlayers == 5) {
+            return false;
+        }
+        this.numberOfPlayers = numberOfPlayers;
+        return true;
+    }
 
     @Override
     public boolean validateMove(int startX, int startY, int endX, int endY, Board board) {
@@ -19,6 +29,6 @@ public class DummyGamemode implements Gamemode {
 
     @Override
     public int getTurn() {
-        return turn%2;
+        return turn%numberOfPlayers;
     }
 }

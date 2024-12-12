@@ -35,6 +35,7 @@ public class ClassicBoardBuilder implements BoardBuilder {
                 board.colorTriangle(6, Color.CYAN);
                 break;
             default:
+                board = null;
         }
 
     }

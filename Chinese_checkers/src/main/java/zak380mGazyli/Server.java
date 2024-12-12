@@ -99,7 +99,7 @@ public class Server {
         return numberOfPlayers;
     }  
 
-    public void setUpGamemode(String gamemodeName, int playerCount) {
+    public boolean setUpGamemode(String gamemodeName, int playerCount) {
         System.out.println("Setting up gamemode: " + gamemodeName);
         this.numberOfPlayers = playerCount;
         GameBuilder gameBuilder = new GameBuilder(gamemodeName);
@@ -107,10 +107,15 @@ public class Server {
         BoardBuilder boardBuilder = gameBuilder.getBoardBuilder();
         gamemodeBuilder.buildGamemode(playerCount);
         boardBuilder.buildBoard(playerCount);
+        if(gamemodeBuilder.getGamemode() == null || boardBuilder.getBoard() == null) {
+            System.out.println("Gamemode setup failed.");
+            return false;
+        }
         this.gamemode = gamemodeBuilder.getGamemode();
         this.board = boardBuilder.getBoard();
         this.settingUp = false;
         System.out.println("Gamemode set up is done.");
+        return true;
     }
 }
 
@@ -247,7 +252,7 @@ class PlayerHandler implements Runnable {
             System.out.println("Player " + playerNumber + " sent command: " + command.getName());
             switch (command.getName()) {
                 case "setUpGamemode":
-                    server.setUpGamemode("DummyGame", command.getArgs()[0]);
+                    if(!server.setUpGamemode("DummyGame", command.getArgs()[0])) sendErrorMessage("Try again, invalid setup.");
                     gamemode = server.getGamemode();
                     break;
                 default:
