@@ -1,0 +1,33 @@
+@startuml
+
+actor Player
+actor Admin
+
+rectangle "Game System" {
+    usecase "Start Game" as UC1
+    usecase "Set Up Gamemode" as UC2
+    usecase "Move Piece" as UC3
+    usecase "Display Board" as UC4
+    usecase "Send Message" as UC5
+    usecase "Quit Game" as UC6
+    usecase "Handle Disconnection" as UC7
+    usecase "Broadcast Game State" as UC8
+    usecase "Process Move" as UC9
+    usecase "Validate Move" as UC10
+    usecase "Update Board" as UC11
+}
+
+Player --> UC1
+Player --> UC2
+Player --> UC3
+Player --> UC4
+Player --> UC5
+Player --> UC6
+Player --> UC7
+
+Admin --> UC8
+Admin --> UC9
+Admin --> UC10
+Admin --> UC11
+
+@enduml
