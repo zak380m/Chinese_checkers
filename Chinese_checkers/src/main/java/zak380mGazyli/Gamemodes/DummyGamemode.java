@@ -6,6 +6,7 @@ public class DummyGamemode implements Gamemode {
 
     private int turn = 0;
     private int numberOfPlayers = 1;
+    private boolean pass = false;
 
     @Override
     public boolean setNumberOfPlayers(int numberOfPlayers) {
@@ -25,10 +26,32 @@ public class DummyGamemode implements Gamemode {
     public void processMove(int startX, int startY, int endX, int endY, Board board) {
         board.updateBoard(startX, startY, endX, endY);
         turn++;
+        pass = false;
+    }
+
+    @Override
+    public void processPass() {
+        turn++;
+        pass = true;
     }
 
     @Override
     public int getTurn() {
         return turn%numberOfPlayers;
+    }
+
+    @Override
+    public boolean isPass() {
+        return pass;
+    }
+
+    @Override 
+    public boolean isTerminal() {
+        return false;
+    }
+
+    @Override
+    public boolean isDraw() {
+        return false;
     }
 }

@@ -53,6 +53,9 @@ public class CLIDisplay implements Display {
 
         commandHandlers.put("help", this::handleHelpCommand);
         commandDescriptions.put("help", "List and explain all available commands.");
+
+        commandHandlers.put("pass", this::handlePassCommand);
+        commandDescriptions.put("pass", "Pass your turn.");
     }
 
     @Override
@@ -62,7 +65,8 @@ public class CLIDisplay implements Display {
             if (jsonResponse.contains("boardState")) {
                 GameState gameState = gson.fromJson(jsonResponse, GameState.class);
                 displayBoard(gameState.getBoardState());
-                System.out.println("Player " + gameState.getWhoMoved() + " just moved.");
+                String moveorpass = gameState.getIsPass() ? " pass" : " moved";
+                System.out.println("Player " + gameState.getWhoMoved() + " just" + moveorpass + ".");
                 System.out.println("Turns until your move: " + gameState.getTurnsBeforePlayer());
             }
             else if (jsonResponse.contains("error")) {
@@ -116,6 +120,11 @@ public class CLIDisplay implements Display {
         }
     }
 
+    private String handlePassCommand() {
+        Command passCommand = new Command("pass");
+        return gson.toJson(passCommand);
+    }
+
     private String handleDisplayCommand() {
         Command displayCommand = new Command("display");
         return gson.toJson(displayCommand);
@@ -133,7 +142,7 @@ public class CLIDisplay implements Display {
             String gamemodeName = scanner.nextLine();
             int numberOfPlayers = scanner.nextInt();
             scanner.nextLine();  
-            Command setUpGamemodeCommand = new Command("setUpGamemode", new int[] { numberOfPlayers }, gamemodeName);
+            Command setUpGamemodeCommand = new Command("setUpGamemode", new int[] { numberOfPlayers, 0 }, gamemodeName);
             return gson.toJson(setUpGamemodeCommand);
         } catch (Exception e) {
             scanner.nextLine();
