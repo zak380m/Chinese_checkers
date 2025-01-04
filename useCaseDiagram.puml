@@ -1,7 +1,7 @@
 @startuml
 
-actor Player
-actor Admin
+actor Client
+actor Server
 
 rectangle "Game System" {
     usecase "Start Game" as UC1
@@ -17,17 +17,17 @@ rectangle "Game System" {
     usecase "Update Board" as UC11
 }
 
-Player --> UC1
-Player --> UC2
-Player --> UC3
-Player --> UC4
-Player --> UC5
-Player --> UC6
-Player --> UC7
+Client --> UC1
+Client --> UC2
+Client --> UC3
+Client --> UC4
+Client --> UC5
+Client --> UC6
+Client --> UC7
 
-Admin --> UC8
-Admin --> UC9
-Admin --> UC10
-Admin --> UC11
+Server --> UC8
+Server --> UC9
+Server --> UC10
+Server --> UC11
 
 @enduml
