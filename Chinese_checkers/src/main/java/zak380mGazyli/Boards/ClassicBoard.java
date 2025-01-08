@@ -5,12 +5,10 @@ import zak380mGazyli.Misc.Color;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class ClassicBoard implements Board {
-    private final int x_size = 17;
-    private final int y_size = 25;
     private final String symbol = ".";
-//    private final Cell[][] cells = new Cell[x_size][y_size];
     private final Cell[][] cells = {
         {new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(symbol, Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE)},
         {new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(symbol, Color.WHITE), new Cell(" ", Color.WHITE), new Cell(symbol, Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE)},
@@ -40,7 +38,29 @@ public class ClassicBoard implements Board {
     }
 
     @Override
+    public Cell[] getNeighbours(int x, int y) {
+        Cell[] neighbours = {
+            cells[y + 1][x - 1],
+            cells[y + 1][x + 1],
+            cells[y][x + 2],
+            cells[y - 1][x + 1],
+            cells[y - 1][x - 1],
+            cells[y][x - 2]
+        };
+        for (int i = 0; i < neighbours.length; i++) {
+            if (Objects.equals(neighbours[i].getSymbol(), " ")) {
+                neighbours[i] = null;
+            }
+        }
+        return neighbours;
+    }
+
+    @Override
     public void updateBoard(int startX, int startY, int endX, int endY) {
+        if (cells[startY][startX].getSymbol().equals(" ") || cells[endY][endX].getSymbol().equals(" ")) {
+            System.out.println("Invalid coordinates in updateBoard");
+            return;
+        }
         Cell swap = cells[startX][startY];
         cells[startX][startY] = cells[endX][endY];
         cells[endX][endY] = swap;
@@ -49,8 +69,8 @@ public class ClassicBoard implements Board {
     @Override
     public void displayBoard() {
         // Displaying the board in console for debugging
-        for (int i = 0; i < x_size; i++) {
-            for (int j = 0; j < y_size; j++) {
+        for (int i = 0; i < cells.length; i++) {
+            for (int j = 0; j < cells[0].length; j++) {
                 System.out.print(Color.getEscapeSequence(cells[i][j].getColor()) + cells[i][j].getSymbol());
             }
             System.out.print("\n");
