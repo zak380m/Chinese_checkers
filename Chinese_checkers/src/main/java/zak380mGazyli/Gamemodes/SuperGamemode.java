@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
-public class BasicGamemode implements Gamemode {
+public class SuperGamemode implements Gamemode {
     private int numberOfPlayers;
     private int currentPlayerTurn;
     private boolean pass;
@@ -19,7 +19,7 @@ public class BasicGamemode implements Gamemode {
     private int rankCounter;
     private int turnCount;
 
-    public BasicGamemode() {
+    public SuperGamemode() {
         this.numberOfPlayers = 0;
         this.currentPlayerTurn = 0;
         this.pass = false;
@@ -34,7 +34,7 @@ public class BasicGamemode implements Gamemode {
     @Override
     public boolean setNumberOfPlayers(int numberOfPlayers, Board board) {
         if (numberOfPlayers != 2 && numberOfPlayers != 3 && numberOfPlayers != 4 && numberOfPlayers != 6) {
-            return false; 
+            return false;
         }
 
         this.numberOfPlayers = numberOfPlayers;
@@ -45,7 +45,7 @@ public class BasicGamemode implements Gamemode {
     private void initializePlayerColorsAndAims(Board board) {
         int j = 1;
         for (int i = 0; i < numberOfPlayers; i++) {
-            while(board.getStartArea(j)[0].getColor() == Color.WHITE)j++;
+            while(board.getStartArea(j)[0].getColor() == Color.WHITE) j++;
             playerColors.put(i, board.getStartArea(j)[0].getColor());
             playerPlace.put(i, 0);
             playerAim.put(i, ((j - 1) + 3) % 6 + 1);
@@ -55,6 +55,7 @@ public class BasicGamemode implements Gamemode {
 
     @Override
     public boolean validateMove(int startX, int startY, int endX, int endY, Board board) {
+
         if (!board.getBoard()[startX][startY].getColor().equals(playerColors.get(currentPlayerTurn))) {
             return false;
         }
@@ -71,7 +72,7 @@ public class BasicGamemode implements Gamemode {
             return true;
         }
 
-        return bfsJumpCheck(startX, startY, endX, endY, board);
+        return catapultJumpCheck(startX, startY, endX, endY, board);
     }
 
     private boolean isNeighbor(int startX, int startY, int endX, int endY) {
@@ -90,9 +91,9 @@ public class BasicGamemode implements Gamemode {
         return false;
     }
 
-    private boolean bfsJumpCheck(int startX, int startY, int endX, int endY, Board board) {
+    private boolean catapultJumpCheck(int startX, int startY, int endX, int endY, Board board) {
         int[][] directions = {
-                {0, 2}, {0, -2}, {-1, 1}, {-1, -1}, {1, 1}, {1, -1}
+            {0, 2}, {0, -2}, {-1, 1}, {-1, -1}, {1, 1}, {1, -1}
         };
 
         Queue<int[]> queue = new LinkedList<>();
@@ -106,20 +107,32 @@ public class BasicGamemode implements Gamemode {
             int y = pos[1];
 
             for (int[] dir : directions) {
-                int midX = x + dir[0];
-                int midY = y + dir[1];
-                int newX = x + dir[0] * 2;
-                int newY = y + dir[1] * 2;
+                int step = 1;
+                while (true) {
+                    int midX = x + dir[0] * step;
+                    int midY = y + dir[1] * step;
+                    int newX = x + dir[0] * (step + 1);
+                    int newY = y + dir[1] * (step + 1);
 
-                if (newX == endX && newY == endY && board.getBoard()[midX][midY].getSymbol().equals("O")) {
-                    return true;  
-                }
+                    if (newX < 0 || newX >= board.getBoard().length || newY < 0 || newY >= board.getBoard()[0].length) {
+                        break;  
+                    }
 
-                if (newX >= 0 && newX < board.getBoard().length && newY >= 0 && newY < board.getBoard()[0].length && !visited[newX][newY] &&
-                        board.getBoard()[midX][midY].getSymbol().equals("O") &&
-                        board.getBoard()[newX][newY].getSymbol().equals(".")) {
-                    queue.add(new int[]{newX, newY});
-                    visited[newX][newY] = true;
+                    if (!board.getBoard()[midX][midY].getSymbol().equals("O")) {
+                        break;  
+                    }
+
+                    if (board.getBoard()[newX][newY].getSymbol().equals(".")) {
+                        if (newX == endX && newY == endY) {
+                            return true;  
+                        }
+                        if (!visited[newX][newY]) {
+                            queue.add(new int[]{newX, newY});
+                            visited[newX][newY] = true;
+                        }
+                    }
+
+                    step++;
                 }
             }
         }
@@ -130,7 +143,7 @@ public class BasicGamemode implements Gamemode {
     @Override
     public void processMove(int startX, int startY, int endX, int endY, Board board) {
         board.updateBoard(startX, startY, endX, endY);
-        
+
         if (checkPlayerWon(board, currentPlayerTurn)) {
             updatePlayerRanking(currentPlayerTurn);
         }
@@ -148,7 +161,7 @@ public class BasicGamemode implements Gamemode {
     }
 
     private void updatePlayerRanking(int player) {
-        if (playerPlace.get(player) == 0) {  
+        if (playerPlace.get(player) == 0) {
             playerPlace.put(player, rankCounter);
             finishedPlayersRank[rankCounter - 1] = player;
             rankCounter++;
@@ -177,14 +190,14 @@ public class BasicGamemode implements Gamemode {
     }
 
     private void nextTurn() {
-        boolean stllPlaying = false;
+        boolean stillPlaying = false;
         for (int i = 0; i < numberOfPlayers; i++) {
             if (playerPlace.get(i) == 0) {
-                stllPlaying = true;
+                stillPlaying = true;
                 break;
             }
         }
-        if(!stllPlaying) {
+        if(!stillPlaying) {
             currentPlayerTurn = -1;
             return;
         }
