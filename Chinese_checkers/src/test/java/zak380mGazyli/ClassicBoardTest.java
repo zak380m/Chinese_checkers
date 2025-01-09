@@ -32,5 +32,7 @@ public class ClassicBoardTest {
         board.displayBoard();
         board.updateBoard(4, 6, 4, 8);
         board.displayBoard();
+        board.updateBoard(3, 9, 4, 10);
+        board.displayBoard();
     }
 }

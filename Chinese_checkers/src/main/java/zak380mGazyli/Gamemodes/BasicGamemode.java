@@ -49,6 +49,7 @@ public class BasicGamemode implements Gamemode {
             playerColors.put(i, board.getStartArea(j)[0].getColor());
             playerPlace.put(i, 0);
             playerAim.put(i, ((j - 1) + 3) % 6 + 1);
+            j++;
         }
     }
 

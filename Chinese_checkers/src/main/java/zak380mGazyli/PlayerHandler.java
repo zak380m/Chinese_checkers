@@ -170,7 +170,7 @@ public class PlayerHandler implements Runnable {
             System.out.println("Player " + playerNumber + " sent command: " + command.getName());
 
             if ("setUpGamemode".equals(command.getName()) && command.getArgs().length == 2) {
-                if (!server.setUpGamemode("DummyGame", command.getArgs()[0], command.getArgs()[1])) {
+                if (!server.setUpGamemode(command.getTextArg() , command.getArgs()[0], command.getArgs()[1])) {
                     sendErrorMessage("Try again, invalid setup.");
                 }
                 gamemode = server.getGamemode();

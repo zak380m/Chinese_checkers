@@ -31,7 +31,7 @@ public class BasicGamemodeTest {
             Board board = bb.getBoard();
             board.displayBoard();
             gamemode.setNumberOfPlayers(player_count, board);
-            System.out.println(gamemode.validateMove(10, 3, 10, 4, board));
+            System.out.println(gamemode.validateMove(3, 9, 4, 10, board));
         }
     }
 }
