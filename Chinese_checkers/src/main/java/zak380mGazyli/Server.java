@@ -96,7 +96,7 @@ public class Server {
     public String currentGameState(int playerNumber) {
         Gson gson = new Gson();
         GameState data = new GameState(board.getBoard(), (playerNumber - gamemode.getTurn() + numberOfPlayers) % numberOfPlayers, (gamemode.getTurn()-1+numberOfPlayers)%numberOfPlayers
-        , gamemode.isTerminal(), gamemode.isDraw(), gamemode.isPass());
+        , gamemode.playerPlace(), gamemode.isPass());
         return gson.toJson(data);
     }
 
@@ -119,14 +119,18 @@ public class Server {
         GameBuilder gameBuilder = new GameBuilder(gamemodeName);
         GamemodeBuilder gamemodeBuilder = gameBuilder.getGamemodeBuilder();
         BoardBuilder boardBuilder = gameBuilder.getBoardBuilder();
-        gamemodeBuilder.buildGamemode(playerCount);
         boardBuilder.buildBoard(playerCount);
-        if(gamemodeBuilder.getGamemode() == null || boardBuilder.getBoard() == null) {
+        if(boardBuilder.getBoard() == null) {
+            System.out.println("Board setup failed.");
+            return false;
+        }
+        this.board = boardBuilder.getBoard();
+        gamemodeBuilder.buildGamemode(playerCount, board);
+        if(gamemodeBuilder.getGamemode() == null) {
             System.out.println("Gamemode setup failed.");
             return false;
         }
         this.gamemode = gamemodeBuilder.getGamemode();
-        this.board = boardBuilder.getBoard();
         this.settingUp = false;
         System.out.println("Gamemode set up is done.");
         return true;
