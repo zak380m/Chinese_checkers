@@ -102,18 +102,18 @@ public class BasicGamemode implements Gamemode {
             int y = pos[1];
 
             for (int[] dir : directions) {
-                int midX = x + dir[0] / 2;
-                int midY = y + dir[1] / 2;
-                int newX = x + dir[0];
-                int newY = y + dir[1];
+                int midX = x + dir[0];
+                int midY = y + dir[1];
+                int newX = x + dir[0] * 2;
+                int newY = y + dir[1] * 2;
 
-                if (newX == endX && newY == endY && board.getBoard()[midX][midY] != null && !board.getBoard()[midX][midY].equals(".")) {
+                if (newX == endX && newY == endY && board.getBoard()[midX][midY].getSymbol().equals("O")) {
                     return true;  
                 }
 
                 if (newX >= 0 && newX < board.getBoard().length && newY >= 0 && newY < board.getBoard()[0].length && !visited[newX][newY] &&
-                        board.getBoard()[midX][midY] != null && !board.getBoard()[midX][midY].equals(".") &&
-                        board.getBoard()[midX][midY].equals(".")) {
+                        board.getBoard()[midX][midY].getSymbol().equals("O") &&
+                        board.getBoard()[newX][newY].getSymbol().equals(".")) {
                     queue.add(new int[]{newX, newY});
                     visited[newX][newY] = true;
                 }
