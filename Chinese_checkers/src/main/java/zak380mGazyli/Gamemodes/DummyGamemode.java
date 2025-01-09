@@ -46,12 +46,7 @@ public class DummyGamemode implements Gamemode {
     }
 
     @Override 
-    public boolean isTerminal() {
-        return false;
-    }
-
-    @Override
-    public boolean isDraw() {
-        return false;
+    public int playerPlace(int playerNumber) {
+        return 0;
     }
 }

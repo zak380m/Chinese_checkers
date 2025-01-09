@@ -40,6 +40,16 @@ public class ClassicBoard implements Board {
     }
 
     @Override
+    public int getCols() {
+        return x_size;
+    }
+    
+    @Override
+    public int getRows() {
+        return y_size;
+    }
+
+    @Override
     public void updateBoard(int startX, int startY, int endX, int endY) {
         Cell swap = cells[startX][startY];
         cells[startX][startY] = cells[endX][endY];

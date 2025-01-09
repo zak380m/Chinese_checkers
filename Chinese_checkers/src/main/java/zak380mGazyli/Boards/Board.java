@@ -6,5 +6,7 @@ public interface Board {
     Cell[][] getBoard();
     void updateBoard(int startX, int startY, int endX, int endY);
     void displayBoard();
+    int getCols();
+    int getRows();
 }
 

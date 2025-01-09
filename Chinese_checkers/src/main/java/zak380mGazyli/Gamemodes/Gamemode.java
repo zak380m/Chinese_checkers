@@ -8,7 +8,6 @@ public interface Gamemode {
     public void processMove(int startX, int startY, int endX, int endY, Board board);
     public void processPass();
     public boolean isPass();
-    public boolean isTerminal();
-    public boolean isDraw();
+    public int playerPlace(int playerNumber);
     public int getTurn();
 }
