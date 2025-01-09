@@ -11,7 +11,7 @@ public class ClassicBoardTest {
 //        BoardBuilder bb = new ClassicBoardBuilder();
 //        bb.buildBoard(2);
 //        Board board = bb.getBoard();
-//        board.displayBoard();
+//        board.handleDisplayBoard();
 //    }
 
     @Test

@@ -30,7 +30,8 @@ public class GUIDisplay implements Display {
         try {
             if (jsonResponse.contains("boardState")) {
                 GameState gameState = gson.fromJson(jsonResponse, GameState.class);
-                GUIApp.displayBoard(gameState.getBoardState());
+                GUIApp.handleDisplayBoard(gameState.getBoardState());
+                GUIApp.handleRemaningTurns(gameState.getTurnsBeforePlayer());
 
                 String moveorpass = gameState.getIsPass() ? " pass" : " moved";
                 System.out.println("Player " + gameState.getWhoMoved() + " just" + moveorpass + ".");

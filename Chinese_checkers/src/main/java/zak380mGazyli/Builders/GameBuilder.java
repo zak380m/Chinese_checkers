@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GameBuilder {
-    private final Map<String, GameComponents> gameList = new HashMap<>();
+    private static final Map<String, GameComponents> gameList = new HashMap<>();
     private final String gameName;
 
     public GameBuilder(String gameName) {
@@ -29,6 +29,10 @@ public class GameBuilder {
     public BoardBuilder getBoardBuilder() {
         GameComponents components = gameList.get(gameName);
         return components != null ? components.getBoardBuilder() : null;
+    }
+
+    public static String[] getGameNames() {
+        return gameList.keySet().toArray(new String[0]);
     }
 
     private void populateGamelist() {
