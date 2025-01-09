@@ -23,4 +23,14 @@ public class ClassicBoardTest {
             board.displayBoard();
         }
     }
+
+    @Test
+    public void testMove() {
+        BoardBuilder bb = new ClassicBoardBuilder();
+        bb.buildBoard(6);
+        Board board = bb.getBoard();
+        board.displayBoard();
+        board.updateBoard(4, 6, 4, 8);
+        board.displayBoard();
+    }
 }
