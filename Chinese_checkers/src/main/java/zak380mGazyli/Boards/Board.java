@@ -8,7 +8,5 @@ public interface Board {
     Cell[] getNeighbours(int x, int y);
     void updateBoard(int startX, int startY, int endX, int endY);
     void displayBoard();
-    int getCols();
-    int getRows();
 }
 

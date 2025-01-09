@@ -9,7 +9,7 @@ public class DummyGamemode implements Gamemode {
     private boolean pass = false;
 
     @Override
-    public boolean setNumberOfPlayers(int numberOfPlayers) {
+    public boolean setNumberOfPlayers(int numberOfPlayers, Board board) {
         if(numberOfPlayers < 2 || numberOfPlayers > 6 || numberOfPlayers == 5) {
             return false;
         }

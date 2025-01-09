@@ -14,6 +14,7 @@ public class BasicGamemode implements Gamemode {
     private boolean pass;
     private Map<Integer, String> playerColors;
     private Map<Integer, Integer> playerPlace;
+    private Map<Integer, Integer> playerAim;
     private int[] finishedPlayersRank;
     private int rankCounter;
     private int turnCount;
@@ -24,28 +25,30 @@ public class BasicGamemode implements Gamemode {
         this.pass = false;
         this.playerColors = new HashMap<>();
         this.playerPlace = new HashMap<>();
+        this.playerAim = new HashMap<>();
         this.finishedPlayersRank = new int[6];
         this.rankCounter = 1;
         this.turnCount = 0;
     }
 
     @Override
-    public boolean setNumberOfPlayers(int numberOfPlayers) {
+    public boolean setNumberOfPlayers(int numberOfPlayers, Board board) {
         if (numberOfPlayers != 2 && numberOfPlayers != 3 && numberOfPlayers != 4 && numberOfPlayers != 6) {
             return false; 
         }
 
         this.numberOfPlayers = numberOfPlayers;
-        initializePlayerColors();
+        initializePlayerColorsAndAims(board);
         return true;
     }
 
-    private void initializePlayerColors() {
-        String[] availableColors = {Color.RED, Color.GREEN, Color.YELLOW, Color.BLUE, Color.MAGENTA, Color.CYAN};
-
+    private void initializePlayerColorsAndAims(Board board) {
+        int j = 1;
         for (int i = 0; i < numberOfPlayers; i++) {
-            playerColors.put(i, availableColors[i]);
-            playerPlace.put(i, 0);  
+            while(board.getStartArea(j)[0].getColor() == Color.WHITE)j++;
+            playerColors.put(i, board.getStartArea(j)[0].getColor());
+            playerPlace.put(i, 0);
+            playerAim.put(i, ((j - 1) + 3) % 6 + 1);
         }
     }
 
@@ -88,7 +91,7 @@ public class BasicGamemode implements Gamemode {
         };
 
         Queue<int[]> queue = new LinkedList<>();
-        boolean[][] visited = new boolean[board.getRows()][board.getCols()];  
+        boolean[][] visited = new boolean[board.getBoard().length][board.getBoard()[0].length];  
         queue.add(new int[]{startX, startY});
         visited[startX][startY] = true;
 
@@ -104,10 +107,10 @@ public class BasicGamemode implements Gamemode {
                 int newY = y + dir[1];
 
                 if (newX == endX && newY == endY && board.getBoard()[midX][midY] != null && !board.getBoard()[midX][midY].equals(".")) {
-                    return true;  // Valid jump path
+                    return true;  
                 }
 
-                if (newX >= 0 && newX < board.getRows() && newY >= 0 && newY < board.getCols() && !visited[newX][newY] &&
+                if (newX >= 0 && newX < board.getBoard().length && newY >= 0 && newY < board.getBoard()[0].length && !visited[newX][newY] &&
                         board.getBoard()[midX][midY] != null && !board.getBoard()[midX][midY].equals(".") &&
                         board.getBoard()[midX][midY].equals(".")) {
                     queue.add(new int[]{newX, newY});
@@ -130,9 +133,13 @@ public class BasicGamemode implements Gamemode {
     }
 
     private boolean checkPlayerWon(Board board, int player) {
-        String playerColor = playerColors.get(player);
+        for(int i = 0; i < board.getStartArea(playerAim.get(player)).length; i++) {
+            if (!board.getStartArea(playerAim.get(player))[i].getColor().equals(playerColors.get(player))) {
+                return false;
+            }
+        }
 
-        return board.areAllPiecesInHome(playerColor);
+        return true;
     }
 
     private void updatePlayerRanking(int player) {

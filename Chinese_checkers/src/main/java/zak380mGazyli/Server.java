@@ -119,14 +119,18 @@ public class Server {
         GameBuilder gameBuilder = new GameBuilder(gamemodeName);
         GamemodeBuilder gamemodeBuilder = gameBuilder.getGamemodeBuilder();
         BoardBuilder boardBuilder = gameBuilder.getBoardBuilder();
-        gamemodeBuilder.buildGamemode(playerCount);
         boardBuilder.buildBoard(playerCount);
-        if(gamemodeBuilder.getGamemode() == null || boardBuilder.getBoard() == null) {
+        if(boardBuilder.getBoard() == null) {
+            System.out.println("Board setup failed.");
+            return false;
+        }
+        this.board = boardBuilder.getBoard();
+        gamemodeBuilder.buildGamemode(playerCount, board);
+        if(gamemodeBuilder.getGamemode() == null) {
             System.out.println("Gamemode setup failed.");
             return false;
         }
         this.gamemode = gamemodeBuilder.getGamemode();
-        this.board = boardBuilder.getBoard();
         this.settingUp = false;
         System.out.println("Gamemode set up is done.");
         return true;

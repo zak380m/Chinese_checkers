@@ -2,6 +2,7 @@ package zak380mGazyli.Builders;
 
 import zak380mGazyli.Builders.BoardBuilders.BoardBuilder;
 import zak380mGazyli.Builders.BoardBuilders.ClassicBoardBuilder;
+import zak380mGazyli.Builders.GamemodeBuilders.BasicGamemodeBuilder;
 import zak380mGazyli.Builders.GamemodeBuilders.DummyGamemodeBuilder;
 import zak380mGazyli.Builders.GamemodeBuilders.GamemodeBuilder;
 
@@ -33,5 +34,6 @@ public class GameBuilder {
 
     private void populateGamelist() {
         addGame("DummyGame", new DummyGamemodeBuilder(), new ClassicBoardBuilder());
+        addGame("BasicGame", new BasicGamemodeBuilder(), new ClassicBoardBuilder());
     }
 }
