@@ -1,5 +1,7 @@
 package zak380mGazyli.Gamemodes;
 
+import java.util.Map;
+
 import zak380mGazyli.Boards.Board;
 
 public interface Gamemode {
@@ -8,6 +10,6 @@ public interface Gamemode {
     public void processMove(int startX, int startY, int endX, int endY, Board board);
     public void processPass();
     public boolean isPass();
-    public int playerPlace(int playerNumber);
+    public Map<Integer, Integer> playerPlace();
     public int getTurn();
 }

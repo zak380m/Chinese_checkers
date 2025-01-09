@@ -55,11 +55,35 @@ public class BasicGamemode implements Gamemode {
 
     @Override
     public boolean validateMove(int startX, int startY, int endX, int endY, Board board) {
+        boolean isInBase = false;
+        boolean endsInBase = false;
+
         if (!board.getBoard()[startX][startY].getColor().equals(playerColors.get(currentPlayerTurn))) {
             return false;
         }
 
         if (!board.getBoard()[endX][endY].getSymbol().equals(".")) {
+            return false;
+        }
+
+        for(int i = 0; i < board.getStartArea(playerAim.get(currentPlayerTurn)).length; i++) {
+            if(board.getStartArea(currentPlayerTurn + 1)[i] == board.getBoard()[startX][startY]) {
+                isInBase = true;
+                break;
+            }
+        }
+        for(int j = 0; j < board.getStartArea(playerAim.get(currentPlayerTurn)).length; j++) {
+            if(board.getStartArea(playerAim.get(currentPlayerTurn))[j] == board.getBoard()[endX][endY]) {
+                endsInBase = true;
+                break;
+            }
+        }
+        if(isInBase == true && endsInBase == false) {
+            return false;
+        }
+
+
+        if (startX == endX && startY == endY) {
             return false;
         }
 
@@ -163,8 +187,8 @@ public class BasicGamemode implements Gamemode {
     }
 
     @Override
-    public int playerPlace(int playerNumber) {
-        return playerPlace.get(playerNumber);
+    public Map<Integer, Integer> playerPlace() {
+        return playerPlace;
     }
 
     @Override
@@ -173,6 +197,17 @@ public class BasicGamemode implements Gamemode {
     }
 
     private void nextTurn() {
+        boolean stllPlaying = false;
+        for (int i = 0; i < numberOfPlayers; i++) {
+            if (playerPlace.get(i) == 0) {
+                stllPlaying = true;
+                break;
+            }
+        }
+        if(!stllPlaying) {
+            currentPlayerTurn = -1;
+            return;
+        }
         do {
             currentPlayerTurn = (currentPlayerTurn + 1) % numberOfPlayers;
         } while (playerPlace.get(currentPlayerTurn) != 0);

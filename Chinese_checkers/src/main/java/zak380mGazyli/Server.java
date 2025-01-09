@@ -96,7 +96,7 @@ public class Server {
     public String currentGameState(int playerNumber) {
         Gson gson = new Gson();
         GameState data = new GameState(board.getBoard(), (playerNumber - gamemode.getTurn() + numberOfPlayers) % numberOfPlayers, (gamemode.getTurn()-1+numberOfPlayers)%numberOfPlayers
-        , gamemode.playerPlace(playerNumber), gamemode.isPass());
+        , gamemode.playerPlace(), gamemode.isPass());
         return gson.toJson(data);
     }
 

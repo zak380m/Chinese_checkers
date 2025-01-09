@@ -1,5 +1,8 @@
 package zak380mGazyli.Gamemodes;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import zak380mGazyli.Boards.*;
 
 public class DummyGamemode implements Gamemode {
@@ -7,6 +10,11 @@ public class DummyGamemode implements Gamemode {
     private int turn = 0;
     private int numberOfPlayers = 1;
     private boolean pass = false;
+    private Map<Integer, Integer> playerPlace;
+
+    public DummyGamemode() {
+        this.playerPlace = new HashMap<>();
+    }
 
     @Override
     public boolean setNumberOfPlayers(int numberOfPlayers, Board board) {
@@ -46,7 +54,7 @@ public class DummyGamemode implements Gamemode {
     }
 
     @Override 
-    public int playerPlace(int playerNumber) {
-        return 0;
+    public Map<Integer, Integer> playerPlace() {
+        return playerPlace;
     }
 }
