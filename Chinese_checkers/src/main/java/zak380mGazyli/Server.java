@@ -57,6 +57,8 @@ public class Server {
             players.add(playerHandler2);
             new Thread(playerHandler2).start();
         }
+
+        broadcastCurrentGameState();
     }
 
     public synchronized void processMove(int startX, int startY, int endX, int endY) {
