@@ -19,9 +19,7 @@ public class GUIDisplay implements Display {
         gson = new Gson();
         if (!javafxStarted) {
             javafxStarted = true;
-            new Thread(() -> {
-                Application.launch(GUIApp.class);
-            }).start();
+            new Thread(() -> Application.launch(GUIApp.class)).start();
         }
     }
 
