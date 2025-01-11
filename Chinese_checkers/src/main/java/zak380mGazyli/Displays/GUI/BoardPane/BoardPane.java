@@ -26,6 +26,7 @@ public class BoardPane extends Pane {
     }
 
     public static void displayBoard(Cell[][] board) {
+        clearSelectedCells();
         gridPane.getChildren().clear();
 
         double circle_size = (double) Math.max(width, height) / Math.max(board.length, board[0].length) / 2;
@@ -63,9 +64,19 @@ public class BoardPane extends Pane {
         if (getSelectedCells() == 2) {
             GUIDisplay.setCurrentCommand(new Command("move", new int[] { selectedCells[0].getCol(), selectedCells[0].getRow(), selectedCells[1].getCol(), selectedCells[1].getRow() }));
 
-            for (int i = 1; i >= 0; i--) {
+            clearSelectedCells();
+        }
+    }
+
+    private static void clearSelectedCells() {
+        for (int i = 1; i >= 0; i--) {
+            if (selectedCells[i] != null) {
                 selectedCells[i].toggleSelection();
             }
         }
+    }
+
+    public static void setCurrentPlayer(int i) {
+        System.out.println("Player " + i + " is moving.");
     }
 }

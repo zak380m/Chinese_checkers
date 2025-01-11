@@ -19,7 +19,7 @@ public class GameModePopup {
 
         TextField gamemodeName = new TextField();
         gamemodeName.setPromptText("Gamemode Name");
-        gamemodeName.setText("DummyGame");
+        gamemodeName.setText("BasicGame");
 
         TextField playerNumber = new TextField();
         playerNumber.setPromptText("Number of Players");

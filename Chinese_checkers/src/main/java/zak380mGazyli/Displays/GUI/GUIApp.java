@@ -76,6 +76,12 @@ public class GUIApp extends Application {
         });
     }
 
+    public static void handleCurrentPlayer(int player) {
+        Platform.runLater(() -> {
+            BoardPane.setCurrentPlayer(player + 1);
+        });
+    }
+
     public static void displayError(String message) {
         Platform.runLater(() -> chatBox.displayError(message));
     }

@@ -7,6 +7,7 @@ import java.util.Map;
 
 public class ColorWrapper {
     private static final Map<String, Color> colorMap = new HashMap<>();
+    private static final Map<String, Color> fancyColorMap = new HashMap<>();
 
     static {
         colorMap.put("WHITE", Color.WHITE);
@@ -19,7 +20,19 @@ public class ColorWrapper {
         colorMap.put("GREY", Color.GREY);
     }
 
+    static {
+        fancyColorMap.put("WHITE", Color.WHITE);
+        fancyColorMap.put("RED", Color.web("#EE4266"));
+        fancyColorMap.put("GREEN", Color.web("#6EBA2A"));
+        fancyColorMap.put("YELLOW", Color.web("#FFD23F"));
+        fancyColorMap.put("BLUE", Color.web("#2978A0"));
+        fancyColorMap.put("MAGENTA", Color.web("#540D6E"));
+        fancyColorMap.put("CYAN", Color.web("#56EEF4"));
+        fancyColorMap.put("GREY", Color.GREY);
+    }
+
     public static Color getJavaFXColor(String colorName) {
-        return colorMap.getOrDefault(colorName, Color.BLACK);
+//        return colorMap.getOrDefault(colorName, Color.BLACK);
+        return fancyColorMap.getOrDefault(colorName, Color.BLACK);
     }
 }
