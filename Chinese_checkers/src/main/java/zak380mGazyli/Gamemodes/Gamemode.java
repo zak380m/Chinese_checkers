@@ -12,4 +12,5 @@ public interface Gamemode {
     public boolean isPass();
     public Map<Integer, Integer> playerPlace();
     public int getTurn();
+    public String getName();
 }

@@ -5,9 +5,10 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import zak380mGazyli.Boards.Board;
+import zak380mGazyli.Gamemodes.Gamemode;
 import zak380mGazyli.PlayersHandling.GameRoom;
 import zak380mGazyli.PlayersHandling.Listener;
-import zak380mGazyli.PlayersHandling.PlayerHandler;
 
 public class Server {
     private List<GameRoom> gameRooms = new ArrayList<>();
@@ -24,15 +25,15 @@ public class Server {
         new Listener(serverSocket, this).start();
     }
 
-    public synchronized GameRoom createGameRoom(String gameName, String password, int numberOfPlayers, int numberOfBots) {
-        GameRoom newRoom = new GameRoom(gameName, password, numberOfPlayers, numberOfBots, roomCounter++);
+    public synchronized GameRoom createGameRoom(Gamemode gamemode, Board board, String password, int numberOfPlayers, int numberOfBots) {
+        GameRoom newRoom = new GameRoom(gamemode, board, password, numberOfPlayers, numberOfBots, roomCounter++);
         gameRooms.add(newRoom);
         return newRoom;
     }
 
     public synchronized GameRoom joinGameRoom(String gameName, String password) {
         for (GameRoom room : gameRooms) {
-            if (room.getGameName().equals(gameName) && room.getPassword().equals(password)) {
+            if (room.getGamemodeName().equals(gameName) && room.getPassword().equals(password)) {
                 return room;
             }
         }

@@ -25,7 +25,7 @@ public class PlayerHandler implements Runnable {
     public PlayerHandler(Socket socket, GameRoom room, int playerNumber) {
         this.socket = socket;
         this.room = room;
-        this.gamemode = room.getGamemode() != null ? room.getGamemode() : null;
+        this.gamemode = room.getGamemode();
         this.playerNumber = playerNumber;
         this.isConnected = true;
         this.gson = new Gson();
@@ -51,12 +51,6 @@ public class PlayerHandler implements Runnable {
         try {
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
-
-            if (gamemode == null) {
-                while (isConnected && gamemode == null) {
-                    setUpGamemode();
-                }
-            }
 
             while (isConnected) {
                 String jsonString = (String) in.readObject();
@@ -159,29 +153,6 @@ public class PlayerHandler implements Runnable {
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    private void setUpGamemode() {
-        try {
-            out.writeObject(gson.toJson(new Message("Send setUpGameMode.")));
-            out.flush();
-            String jsonString = (String) in.readObject();
-            Command command = gson.fromJson(jsonString, Command.class);
-            System.out.println("Player " + playerNumber + " sent command: " + command.getName());
-
-            if ("setUpGamemode".equals(command.getName()) && command.getArgs().length == 2) {
-                if (!room.setUpGamemode(command.getTextArg() , command.getArgs()[0], command.getArgs()[1])) {
-                    sendErrorMessage("Try again, invalid setup.");
-                }
-                gamemode = room.getGamemode();
-            } else {
-                sendErrorMessage("Try again, invalid setup.");
-            }
-        } catch (SocketException e) {
-            isConnected = false;
-        } catch (IOException | ClassNotFoundException e) {
-            sendErrorMessage(e.getMessage());
         }
     }
 

@@ -32,6 +32,11 @@ public class BasicGamemode implements Gamemode {
     }
 
     @Override
+    public String getName() {
+        return "BasicGame";
+    }
+
+    @Override
     public boolean setNumberOfPlayers(int numberOfPlayers, Board board) {
         if (numberOfPlayers != 2 && numberOfPlayers != 3 && numberOfPlayers != 4 && numberOfPlayers != 6) {
             return false; 

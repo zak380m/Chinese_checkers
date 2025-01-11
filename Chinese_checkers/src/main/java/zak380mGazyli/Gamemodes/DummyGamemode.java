@@ -15,6 +15,11 @@ public class DummyGamemode implements Gamemode {
     public DummyGamemode() {
         this.playerPlace = new HashMap<>();
     }
+    
+    @Override
+    public String getName() {
+        return "DummyGame";
+    }
 
     @Override
     public boolean setNumberOfPlayers(int numberOfPlayers, Board board) {
