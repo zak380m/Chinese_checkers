@@ -65,7 +65,7 @@ public class ClassicBoard implements Board {
 
     @Override
     public void updateBoard(int startX, int startY, int endX, int endY) {
-        if (cells[startX][startY].getSymbol().equals(" ") || cells[endX][endY].getSymbol().equals(" ")) {
+        if (cells[startY][startX].getSymbol().equals(" ") || cells[endY][endX].getSymbol().equals(" ")) {
             System.out.println("Invalid coordinates in updateBoard");
             return;
         }

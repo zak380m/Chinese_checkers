@@ -55,11 +55,11 @@ public class BasicGamemode implements Gamemode {
 
     @Override
     public boolean validateMove(int startX, int startY, int endX, int endY, Board board) {
-        if (!board.getBoard()[startX][startY].getColor().equals(playerColors.get(currentPlayerTurn))) {
+        if (!board.getBoard()[startY][startX].getColor().equals(playerColors.get(currentPlayerTurn))) {
             return false;
         }
 
-        if (!board.getBoard()[endX][endY].getSymbol().equals(".")) {
+        if (!board.getBoard()[endY][endX].getSymbol().equals(".")) {
             return false;
         }
 
@@ -80,8 +80,8 @@ public class BasicGamemode implements Gamemode {
         };
 
         for (int[] dir : directions) {
-            int newX = startX + dir[0];
-            int newY = startY + dir[1];
+            int newY = startY + dir[0];
+            int newX = startX + dir[1];
             if (newX == endX && newY == endY) {
                 return true;
             }
@@ -98,7 +98,7 @@ public class BasicGamemode implements Gamemode {
         Queue<int[]> queue = new LinkedList<>();
         boolean[][] visited = new boolean[board.getBoard().length][board.getBoard()[0].length];  
         queue.add(new int[]{startX, startY});
-        visited[startX][startY] = true;
+        visited[startY][startX] = true;
 
         while (!queue.isEmpty()) {
             int[] pos = queue.poll();
@@ -106,20 +106,20 @@ public class BasicGamemode implements Gamemode {
             int y = pos[1];
 
             for (int[] dir : directions) {
-                int midX = x + dir[0];
-                int midY = y + dir[1];
-                int newX = x + dir[0] * 2;
-                int newY = y + dir[1] * 2;
+                int midY = y + dir[0];
+                int midX = x + dir[1];
+                int newY = y + dir[0] * 2;
+                int newX = x + dir[1] * 2;
 
-                if (newX == endX && newY == endY && board.getBoard()[midX][midY].getSymbol().equals("O")) {
+                if (newX == endX && newY == endY && board.getBoard()[midY][midX].getSymbol().equals("O")) {
                     return true;  
                 }
 
-                if (newX >= 0 && newX < board.getBoard().length && newY >= 0 && newY < board.getBoard()[0].length && !visited[newX][newY] &&
-                        board.getBoard()[midX][midY].getSymbol().equals("O") &&
-                        board.getBoard()[newX][newY].getSymbol().equals(".")) {
+                if (newY >= 0 && newY < board.getBoard().length && newX >= 0 && newX < board.getBoard()[0].length && !visited[newY][newX] &&
+                        board.getBoard()[midY][midX].getSymbol().equals("O") &&
+                        board.getBoard()[newY][newX].getSymbol().equals(".")) {
                     queue.add(new int[]{newX, newY});
-                    visited[newX][newY] = true;
+                    visited[newY][newX] = true;
                 }
             }
         }
