@@ -45,8 +45,8 @@ public class SuperGamemode implements Gamemode {
     private void initializePlayerColorsAndAims(Board board) {
         int j = 1;
         for (int i = 0; i < numberOfPlayers; i++) {
-            while(board.getStartArea(j)[0].getColor() == Color.WHITE) j++;
-            playerColors.put(i, board.getStartArea(j)[0].getColor());
+            while(board.getBoard()[board.getStartArea(j)[0][0]][board.getStartArea(j)[0][1]].getColor() == Color.WHITE)j++;
+            playerColors.put(i, board.getBoard()[board.getStartArea(j)[0][0]][board.getStartArea(j)[0][1]].getColor());
             playerPlace.put(i, 0);
             playerAim.put(i, ((j - 1) + 3) % 6 + 1);
             j++;
@@ -55,6 +55,8 @@ public class SuperGamemode implements Gamemode {
 
     @Override
     public boolean validateMove(int startX, int startY, int endX, int endY, Board board) {
+        boolean isInBase = false;
+        boolean endsInBase = false;
 
         if (!board.getBoard()[startY][startX].getColor().equals(playerColors.get(currentPlayerTurn))) {
             return false;
@@ -68,17 +70,31 @@ public class SuperGamemode implements Gamemode {
             return false;
         }
 
-        if (isNeighbor(startX, startY, endX, endY)) {
+        for(int i = 0; i < board.getStartArea(playerAim.get(currentPlayerTurn)).length; i++) {
+            if (startX == board.getStartArea(playerAim.get(currentPlayerTurn))[i][1] && startY == board.getStartArea(playerAim.get(currentPlayerTurn))[i][0]) {
+                isInBase = true;
+            }
+            if (endX == board.getStartArea(playerAim.get(currentPlayerTurn))[i][1] && endY == board.getStartArea(playerAim.get(currentPlayerTurn))[i][0]) {
+                endsInBase = true;
+            }
+            if(isInBase && endsInBase) {
+                break;
+            }
+        }
+
+        if(isInBase == true && endsInBase == false) {
+            return false;
+        }
+
+        if (isNeighbor(startX, startY, endX, endY, board)) {
             return true;
         }
 
         return catapultJumpCheck(startX, startY, endX, endY, board);
     }
 
-    private boolean isNeighbor(int startX, int startY, int endX, int endY) {
-        int[][] directions = {
-                {0, 2}, {0, -2}, {-1, 1}, {-1, -1}, {1, 1}, {1, -1}
-        };
+    private boolean isNeighbor(int startX, int startY, int endX, int endY, Board board) {
+        int[][] directions = board.getNeighbours();
 
         for (int[] dir : directions) {
             int newY = startY + dir[0];
@@ -92,9 +108,7 @@ public class SuperGamemode implements Gamemode {
     }
 
     private boolean catapultJumpCheck(int startX, int startY, int endX, int endY, Board board) {
-        int[][] directions = {
-            {0, 2}, {0, -2}, {-1, 1}, {-1, -1}, {1, 1}, {1, -1}
-        };
+        int[][] directions = board.getNeighbours();
 
         Queue<int[]> queue = new LinkedList<>();
         boolean[][] visited = new boolean[board.getBoard().length][board.getBoard()[0].length];  
@@ -152,7 +166,7 @@ public class SuperGamemode implements Gamemode {
 
     private boolean checkPlayerWon(Board board, int player) {
         for(int i = 0; i < board.getStartArea(playerAim.get(player)).length; i++) {
-            if (!board.getStartArea(playerAim.get(player))[i].getColor().equals(playerColors.get(player))) {
+            if (!board.getBoard()[board.getStartArea(playerAim.get(player))[i][0]][board.getStartArea(playerAim.get(player))[i][1]].getColor().equals(playerColors.get(player))) {
                 return false;
             }
         }

@@ -5,7 +5,6 @@ import zak380mGazyli.Misc.Color;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class ClassicBoard implements Board {
     private final String symbol = ".";
@@ -29,15 +28,15 @@ public class ClassicBoard implements Board {
         {new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(symbol, Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE), new Cell(" ", Color.WHITE)}
     };
 
-    private final Map<Integer, Cell[]> triangles = new HashMap<>();
+    private final Map<Integer, int[][]> triangles = new HashMap<>();
 
     public ClassicBoard() {
-        triangles.put(1, new Cell[]{cells[0][12], cells[1][11], cells[1][13], cells[2][10], cells[2][12], cells[2][14], cells[3][9], cells[3][11], cells[3][13], cells[3][15]});
-        triangles.put(2, new Cell[]{cells[4][18], cells[4][20], cells[4][22], cells[4][24], cells[5][19], cells[5][21], cells[5][23],  cells[6][20], cells[6][22], cells[7][21]});
-        triangles.put(3, new Cell[]{cells[12][18], cells[12][20], cells[12][22], cells[12][24], cells[11][19], cells[11][21], cells[11][23],  cells[10][20], cells[10][22], cells[9][21]});
-        triangles.put(4, new Cell[]{cells[16][12], cells[15][11], cells[15][13], cells[14][10], cells[14][12], cells[14][14], cells[13][9], cells[13][11], cells[13][13], cells[13][15]});
-        triangles.put(5, new Cell[]{cells[12][0], cells[12][2], cells[12][4], cells[12][6], cells[11][1], cells[11][3], cells[11][5],  cells[10][2], cells[10][4], cells[9][3]});
-        triangles.put(6, new Cell[]{cells[4][0], cells[4][2], cells[4][4], cells[4][6], cells[5][1], cells[5][3], cells[5][5],  cells[6][2], cells[6][4], cells[7][3]});
+        triangles.put(1, new int[][]{{0, 12}, {1, 11}, {1, 13}, {2, 10}, {2, 12}, {2, 14}, {3, 9}, {3, 11}, {3, 13}, {3, 15}});
+        triangles.put(2, new int[][]{{4, 18}, {4, 20}, {4, 22}, {4, 24}, {5, 19}, {5, 21}, {5, 23},  {6, 20}, {6, 22}, {7, 21}});
+        triangles.put(3, new int[][]{{12, 18}, {12, 20}, {12, 22}, {12, 24}, {11, 19}, {11, 21}, {11, 23},  {10, 20}, {10, 22}, {9, 21}});
+        triangles.put(4, new int[][]{{16, 12}, {15, 11}, {15, 13}, {14, 10}, {14, 12}, {14, 14}, {13, 9}, {13, 11}, {13, 13}, {13, 15}});
+        triangles.put(5, new int[][]{{12, 0}, {12, 2}, {12, 4}, {12, 6}, {11, 1}, {11, 3}, {11, 5},  {10, 2}, {10, 4}, {9, 3}});
+        triangles.put(6, new int[][]{{4, 0}, {4, 2}, {4, 4}, {4, 6}, {5, 1}, {5, 3}, {5, 5},  {6, 2}, {6, 4}, {7, 3}});
     }
 
     @Override
@@ -46,21 +45,8 @@ public class ClassicBoard implements Board {
     }
 
     @Override
-    public Cell[] getNeighbours(int x, int y) {
-        Cell[] neighbours = {
-            cells[y + 1][x - 1],
-            cells[y + 1][x + 1],
-            cells[y][x + 2],
-            cells[y - 1][x + 1],
-            cells[y - 1][x - 1],
-            cells[y][x - 2]
-        };
-        for (int i = 0; i < neighbours.length; i++) {
-            if (Objects.equals(neighbours[i].getSymbol(), " ")) {
-                neighbours[i] = null;
-            }
-        }
-        return neighbours;
+    public int[][] getNeighbours() {
+        return new int[][]{{0, 2}, {0, -2}, {-1, 1}, {-1, -1}, {1, 1}, {1, -1}};
     }
 
     @Override
@@ -86,14 +72,14 @@ public class ClassicBoard implements Board {
     }
 
     @Override
-    public Cell[] getStartArea(int area_num) {
+    public int[][] getStartArea(int area_num) {
         return triangles.get(area_num);
     }
 
     public void colorTriangle(int triangle_num, String color) {
-        for (Cell cell : triangles.get(triangle_num)) {
-            cell.setSymbol("O");
-            cell.setColor(color);
+        for (int[] cord : triangles.get(triangle_num)) {
+            cells[cord[0]][cord[1]].setColor(color);
+            cells[cord[0]][cord[1]].setSymbol("O");
         }
     }
 
