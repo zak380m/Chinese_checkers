@@ -1,8 +1,6 @@
-package zak380mGazyli;
+package zak380mGazyli.Misc;
 
 import java.util.Map;
-
-import zak380mGazyli.Misc.Cell;
 
 public class GameState {
     private int whoMoved;

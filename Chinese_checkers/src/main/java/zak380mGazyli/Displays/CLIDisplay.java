@@ -8,12 +8,12 @@ import java.util.Scanner;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-import zak380mGazyli.GameState;
 import zak380mGazyli.Messages.Command;
 import zak380mGazyli.Messages.ErrorMessage;
 import zak380mGazyli.Messages.Message;
 import zak380mGazyli.Misc.Cell;
 import zak380mGazyli.Misc.Color;
+import zak380mGazyli.Misc.GameState;
 
 public class CLIDisplay implements Display {
 

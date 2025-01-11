@@ -4,10 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import javafx.application.Application;
 import zak380mGazyli.Displays.Display;
-import zak380mGazyli.GameState;
 import zak380mGazyli.Messages.Command;
 import zak380mGazyli.Messages.ErrorMessage;
 import zak380mGazyli.Messages.Message;
+import zak380mGazyli.Misc.GameState;
 
 public class GUIDisplay implements Display {
     private final Gson gson;

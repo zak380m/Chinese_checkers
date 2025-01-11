@@ -1,10 +1,11 @@
-package zak380mGazyli;
+package zak380mGazyli.PlayersHandling;
 
 import java.io.*;
 import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
 import com.google.gson.Gson;
+
 import zak380mGazyli.Gamemodes.Gamemode;
 import zak380mGazyli.Messages.Command;
 import zak380mGazyli.Messages.ErrorMessage;
@@ -12,7 +13,7 @@ import zak380mGazyli.Messages.Message;
 
 public class PlayerHandler implements Runnable {
     private Socket socket;
-    private Server server;
+    private GameRoom room;
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private Gamemode gamemode;
@@ -21,10 +22,10 @@ public class PlayerHandler implements Runnable {
     private Gson gson;
     private Map<String, CommandHandler> commandHandlers;
 
-    public PlayerHandler(Socket socket, Server server, int playerNumber) {
+    public PlayerHandler(Socket socket, GameRoom room, int playerNumber) {
         this.socket = socket;
-        this.server = server;
-        this.gamemode = server.getGamemode() != null ? server.getGamemode() : null;
+        this.room = room;
+        this.gamemode = room.getGamemode() != null ? room.getGamemode() : null;
         this.playerNumber = playerNumber;
         this.isConnected = true;
         this.gson = new Gson();
@@ -88,7 +89,7 @@ public class PlayerHandler implements Runnable {
             int endY = command.getArgs()[3];
 
             if (gamemode.getTurn() == playerNumber) {
-                server.processMove(startX, startY, endX, endY);
+                room.processMove(startX, startY, endX, endY);
                 System.out.println("Player " + playerNumber + " moved from " +
                         startX + ", " + startY + " to " + endX + ", " + endY);
             } else {
@@ -101,7 +102,7 @@ public class PlayerHandler implements Runnable {
 
     private void handlePassCommand(Command command) {
         if (gamemode.getTurn() == playerNumber) {
-            server.processPass();
+            room.processPass();
             System.out.println("Player " + playerNumber + " pass.");
         } else {
             sendErrorMessage("Not your turn.");
@@ -109,7 +110,7 @@ public class PlayerHandler implements Runnable {
     }
 
     private void handleDisplayCommand(Command command) {
-        sendJsonReply(server.currentGameState(playerNumber));
+        sendJsonReply(room.currentGameState(playerNumber));
     }
 
     private void handleQuitCommand(Command command) {
@@ -119,11 +120,11 @@ public class PlayerHandler implements Runnable {
     private void handleMessageCommand(Command command) {
         if (command.getArgs().length == 1 && command.getTextArg() != null) {
             if (command.getArgs()[0] == -1) {
-                server.broadcastToAllExceptOne(gson.toJson(new Message(command.getTextArg() + " FROM PLAYER: " + playerNumber)), playerNumber);
+                room.broadcastToAllExceptOne(gson.toJson(new Message(command.getTextArg() + " FROM PLAYER: " + playerNumber)), playerNumber);
             } else {
                 int recipient = command.getArgs()[0];
-                if (recipient >= 0 && recipient < server.getNumberOfPlayers()) {
-                    server.sendToAPlayer(gson.toJson(new Message(command.getTextArg() + " FROM PLAYER: " + playerNumber)), recipient);
+                if (recipient >= 0 && recipient < room.getNumberOfPlayers()) {
+                    room.sendToAPlayer(gson.toJson(new Message(command.getTextArg() + " FROM PLAYER: " + playerNumber)), recipient);
                 } else {
                     sendErrorMessage("Invalid player number.");
                 }
@@ -153,7 +154,7 @@ public class PlayerHandler implements Runnable {
 
     public void handleDisconnection() {
         isConnected = false;
-        server.removePlayer(this);
+        room.removePlayer(this);
         try {
             socket.close();
         } catch (IOException e) {
@@ -170,10 +171,10 @@ public class PlayerHandler implements Runnable {
             System.out.println("Player " + playerNumber + " sent command: " + command.getName());
 
             if ("setUpGamemode".equals(command.getName()) && command.getArgs().length == 2) {
-                if (!server.setUpGamemode(command.getTextArg() , command.getArgs()[0], command.getArgs()[1])) {
+                if (!room.setUpGamemode(command.getTextArg() , command.getArgs()[0], command.getArgs()[1])) {
                     sendErrorMessage("Try again, invalid setup.");
                 }
-                gamemode = server.getGamemode();
+                gamemode = room.getGamemode();
             } else {
                 sendErrorMessage("Try again, invalid setup.");
             }
