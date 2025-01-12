@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import zak380mGazyli.Boards.*;
+import zak380mGazyli.Misc.Color;
 
 public class DummyGamemode implements Gamemode {
 
@@ -61,5 +62,15 @@ public class DummyGamemode implements Gamemode {
     @Override 
     public Map<Integer, Integer> playerPlace() {
         return playerPlace;
+    }
+
+    @Override
+    public int getTurnCount() {
+        return turn;
+    }
+
+    @Override
+    public String getPlayerColor(int playerNumber) {
+        return Color.BLUE;
     }
 }

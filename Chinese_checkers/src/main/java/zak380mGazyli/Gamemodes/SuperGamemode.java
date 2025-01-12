@@ -225,4 +225,14 @@ public class SuperGamemode implements Gamemode {
         } while (playerPlace.get(currentPlayerTurn) != 0);
         turnCount++;
     }
+
+    @Override
+    public int getTurnCount() {
+        return turnCount;
+    }
+
+    @Override
+    public String getPlayerColor(int playerNumber) {
+        return playerColors.get(playerNumber);
+    }
 }

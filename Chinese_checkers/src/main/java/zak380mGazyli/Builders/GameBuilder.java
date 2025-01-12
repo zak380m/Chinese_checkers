@@ -14,12 +14,15 @@ import java.util.Map;
 
 public class GameBuilder {
     private static final Map<String, GameComponents> gameList = new HashMap<>();
-    private final String gameName;
+    private String gameName;
     private static final List<String> gameNameList = new ArrayList<>();
 
-    public GameBuilder(String gameName) {
-        this.gameName = gameName;
+    public GameBuilder() {
         populateGamelist();
+    }
+
+    public void setGameName(String gameName) {
+        this.gameName = gameName;
     }
 
     public void addGame(String name, GamemodeBuilder gamemodeBuilder, BoardBuilder boardBuilder) {
@@ -49,5 +52,9 @@ public class GameBuilder {
 
     public List<String> getGameList() {
         return gameNameList;
+    }
+
+    public List<String> getBoardList() {
+        return new ArrayList<>();
     }
 }

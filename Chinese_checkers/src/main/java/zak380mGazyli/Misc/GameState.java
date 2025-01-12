@@ -5,16 +5,21 @@ import java.util.Map;
 public class GameState {
     private int whoMoved;
     private Cell[][] boardState;
-    private int turnsBeforePlayer;
+    private int playerNumber;
+    private String playerColor;
+    private int turnCount;
     private Map<Integer, Integer> playerPlace;
+
     private boolean isPass;
 
-    public GameState(Cell[][] boardState, int turnsBeforePlayer, int whoMoved, Map<Integer, Integer> playerPlace, boolean isPass) {
+    public GameState(Cell[][] boardState, int playerNumber, int whoMoved, Map<Integer, Integer> playerPlace, boolean isPass, String playerColor, int turnCount) {
         this.boardState = boardState;
-        this.turnsBeforePlayer = turnsBeforePlayer;
+        this.playerNumber = playerNumber;
         this.whoMoved = whoMoved;
         this.playerPlace = playerPlace;
         this.isPass = isPass;
+        this.playerColor = playerColor;
+        this.turnCount = turnCount;
     }
 
     public int getWhoMoved() {
@@ -25,8 +30,8 @@ public class GameState {
         return boardState;
     }
 
-    public int getTurnsBeforePlayer() {
-        return turnsBeforePlayer;
+    public int getPlayerNumber() {
+        return playerNumber;
     }
 
     public Map<Integer, Integer> getPlayerPlace() {
@@ -35,5 +40,13 @@ public class GameState {
 
     public boolean getIsPass() {
         return isPass;
+    }
+
+    public String getPlayerColor() {
+        return playerColor;
+    }
+
+    public int getTurnCount() {
+        return turnCount;
     }
 }

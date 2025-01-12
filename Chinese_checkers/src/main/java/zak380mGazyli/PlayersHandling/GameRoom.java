@@ -48,11 +48,13 @@ public class GameRoom {
         return (numberOfPlayers - players.size() > 0);
     }
 
-    public synchronized void addPlayer(Socket playerSocket) {
+    public synchronized boolean addPlayer(Socket playerSocket) {
+        if(players.size() >= numberOfPlayers) return false;
         PlayerHandler playerHandler = new PlayerHandler(playerSocket, this, players.size());
         players.add(playerHandler);
         new Thread(playerHandler).start();
         System.out.println("Player added to room: " + roomId);
+        return true;
     }
 
     public synchronized void processMove(int startX, int startY, int endX, int endY) {
@@ -91,8 +93,8 @@ public class GameRoom {
 
     public String currentGameState(int playerNumber) {
         Gson gson = new Gson();
-        GameState data = new GameState(board.getBoard(), (playerNumber - gamemode.getTurn() + numberOfPlayers) % numberOfPlayers, (gamemode.getTurn()-1+numberOfPlayers)%numberOfPlayers
-        , gamemode.playerPlace(), gamemode.isPass());
+        GameState data = new GameState(board.getBoard(), playerNumber, (gamemode.getTurn()-1+numberOfPlayers)%numberOfPlayers
+        , gamemode.playerPlace(), gamemode.isPass(), gamemode.getPlayerColor(playerNumber), gamemode.getTurnCount());
         return gson.toJson(data);
     }
 

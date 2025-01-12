@@ -13,4 +13,6 @@ public interface Gamemode {
     public Map<Integer, Integer> playerPlace();
     public int getTurn();
     public String getName();
+    public int getTurnCount();
+    public String getPlayerColor(int playerNumber);
 }

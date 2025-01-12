@@ -33,7 +33,7 @@ public class Server {
 
     public synchronized GameRoom joinGameRoom(String gameName, String password) {
         for (GameRoom room : gameRooms) {
-            if (room.getGamemodeName().equals(gameName) && room.getPassword().equals(password)) {
+            if (room.getGamemodeName().equals(gameName) && room.getPassword().equals(password) && room.areThereMissingPlayers()) {
                 return room;
             }
         }
