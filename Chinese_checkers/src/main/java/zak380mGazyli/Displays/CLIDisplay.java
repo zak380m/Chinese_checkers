@@ -14,6 +14,7 @@ import zak380mGazyli.Messages.Message;
 import zak380mGazyli.Misc.Cell;
 import zak380mGazyli.Misc.Color;
 import zak380mGazyli.Misc.GameState;
+import zak380mGazyli.Misc.SetUp;
 
 public class CLIDisplay implements Display {
 
@@ -62,12 +63,13 @@ public class CLIDisplay implements Display {
     public void displayInterface(String jsonResponse) {
         clearTerminal();
         try {
-            if (jsonResponse.contains("boardState")) {
+            if (jsonResponse.contains("create")) {
+                System.out.println("Type: setupgamemode");
+            } else if (jsonResponse.contains("boardState")) {
                 GameState gameState = gson.fromJson(jsonResponse, GameState.class);
                 displayBoard(gameState.getBoardState());
                 String moveorpass = gameState.getIsPass() ? " pass" : " moved";
                 System.out.println("Player " + gameState.getWhoMoved() + " just" + moveorpass + ".");
-                System.out.println("Turns until your move: " + gameState.getTurnsBeforePlayer());
             }
             else if (jsonResponse.contains("error")) {
                 ErrorMessage errorMessage = gson.fromJson(jsonResponse, ErrorMessage.class);
@@ -138,12 +140,29 @@ public class CLIDisplay implements Display {
 
     private String handleSetUpGamemodeCommand() {
         try {
-            System.out.println("Enter gamemodeName, numberOfPlayers:");
-            String gamemodeName = scanner.nextLine();
-            int numberOfPlayers = scanner.nextInt();
-            scanner.nextLine();  
-            Command setUpGamemodeCommand = new Command("setUpGamemode", new int[] { numberOfPlayers, 0 }, gamemodeName);
-            return gson.toJson(setUpGamemodeCommand);
+            SetUp setUp = new SetUp();
+            String command;
+            System.out.println("Do you want to create a new game? (yes/no)");
+            command = scanner.nextLine();
+            if(command.toLowerCase().equals("yes")) {
+                setUp.setCreate(true);
+                System.out.println("Enter gamemode name:");
+                setUp.setGamemode(scanner.nextLine());
+                System.out.println("Enter number of players:");
+                setUp.setPlayerCount(scanner.nextInt());
+                scanner.nextLine();
+                System.out.println("Enter password:");
+                setUp.setPassword(scanner.nextLine());
+            } else if(command.toLowerCase().equals("no")) {
+                setUp.setCreate(false);
+                System.out.println("Enter gamemode name:");
+                setUp.setGamemode(scanner.nextLine());
+                System.out.println("Enter password:");
+                setUp.setPassword(scanner.nextLine());
+            } else {
+                return gson.toJson(new Command("Invalid command."));
+            }
+            return gson.toJson(setUp);
         } catch (Exception e) {
             scanner.nextLine();
             return gson.toJson(new Command("Invalid command."));

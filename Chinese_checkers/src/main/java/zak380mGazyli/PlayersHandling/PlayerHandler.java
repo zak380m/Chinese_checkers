@@ -22,8 +22,10 @@ public class PlayerHandler implements Runnable {
     private Gson gson;
     private Map<String, CommandHandler> commandHandlers;
 
-    public PlayerHandler(Socket socket, GameRoom room, int playerNumber) {
+    public PlayerHandler(Socket socket, ObjectOutputStream out, ObjectInputStream in, GameRoom room, int playerNumber) {
         this.socket = socket;
+        this.out = out;
+        this.in = in;
         this.room = room;
         this.gamemode = room.getGamemode();
         this.playerNumber = playerNumber;
@@ -49,9 +51,6 @@ public class PlayerHandler implements Runnable {
     @Override
     public void run() {
         try {
-            out = new ObjectOutputStream(socket.getOutputStream());
-            in = new ObjectInputStream(socket.getInputStream());
-
             while (isConnected) {
                 String jsonString = (String) in.readObject();
                 Command command = gson.fromJson(jsonString, Command.class);

@@ -1,5 +1,7 @@
 package zak380mGazyli.PlayersHandling;
 
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.*;
 import java.util.*;
 
@@ -48,9 +50,9 @@ public class GameRoom {
         return (numberOfPlayers - players.size() > 0);
     }
 
-    public synchronized boolean addPlayer(Socket playerSocket) {
+    public synchronized boolean addPlayer(Socket playerSocket, ObjectOutputStream out, ObjectInputStream in) {
         if(players.size() >= numberOfPlayers) return false;
-        PlayerHandler playerHandler = new PlayerHandler(playerSocket, this, players.size());
+        PlayerHandler playerHandler = new PlayerHandler(playerSocket, out, in, this, players.size());
         players.add(playerHandler);
         new Thread(playerHandler).start();
         System.out.println("Player added to room: " + roomId);

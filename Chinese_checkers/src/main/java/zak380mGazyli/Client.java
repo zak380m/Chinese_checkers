@@ -10,7 +10,7 @@ public class Client {
     private Socket socket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
-    private final Display display = new GUIDisplay();
+    private final Display display = new CLIDisplay();
     private boolean isConnected = true;
 
     public static void main(String[] args) throws IOException {

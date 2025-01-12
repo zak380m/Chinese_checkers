@@ -24,6 +24,7 @@ public class Listener extends Thread {
         this.serverSocket = serverSocket;
         this.server = server;
         this.gameBuilder = new GameBuilder();
+        this.gson = new Gson();
     }
 
     @Override
@@ -54,7 +55,7 @@ public class Listener extends Thread {
                     String jsonString = (String) in.readObject();
                     SetUp info = gson.fromJson(jsonString, SetUp.class);
                     if (info.isCreate()) {
-                        if(createGameRoom(info.getGamemode(), info.getPlayerCount(), info.getBotCount(), info.getPassword(), playerSocket)) {
+                        if(createGameRoom(info.getGamemode(), info.getPlayerCount(), info.getBotCount(), info.getPassword(), playerSocket, out, in)) {
                             isSetUp = true;
                         } else {
                             ErrorMessage errors = new ErrorMessage("Try again, invalid room data.");
@@ -63,7 +64,7 @@ public class Listener extends Thread {
                     } else {
                         GameRoom gameRoom = server.joinGameRoom(info.getGamemode(), info.getPassword());
                         if(gameRoom != null) {
-                            isSetUp = gameRoom.addPlayer(playerSocket);
+                            isSetUp = gameRoom.addPlayer(playerSocket, out, in);
                         } else {
                             ErrorMessage errors = new ErrorMessage("Try again, invalid room data.");
                             out.writeObject(gson.toJson(errors));
@@ -80,7 +81,7 @@ public class Listener extends Thread {
         }
     }
 
-    public boolean createGameRoom(String gamemodeName, int playerCount, int botCount, String password, Socket playerSocket) {
+    public boolean createGameRoom(String gamemodeName, int playerCount, int botCount, String password, Socket playerSocket, ObjectOutputStream out, ObjectInputStream in) {
         System.out.println("Setting up gamemode: " + gamemodeName);
         gameBuilder.setGameName(gamemodeName);
         GamemodeBuilder gamemodeBuilder = gameBuilder.getGamemodeBuilder();
@@ -101,7 +102,7 @@ public class Listener extends Thread {
         GameRoom gameRoom = server.createGameRoom(gamemode, board, password, playerCount, botCount);
         if(gameRoom != null) {
             System.out.println("Game room created.");
-            gameRoom.addPlayer(playerSocket);
+            gameRoom.addPlayer(playerSocket, out, in);
         } else {
             System.out.println("Game room creation failed.");
             return false;

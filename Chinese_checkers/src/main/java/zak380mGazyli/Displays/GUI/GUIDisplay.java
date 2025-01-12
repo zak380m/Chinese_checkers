@@ -29,12 +29,12 @@ public class GUIDisplay implements Display {
             if (jsonResponse.contains("boardState")) {
                 GameState gameState = gson.fromJson(jsonResponse, GameState.class);
                 GUIApp.handleDisplayBoard(gameState.getBoardState());
-                GUIApp.handleRemaningTurns(gameState.getTurnsBeforePlayer());
+                //GUIApp.handleRemaningTurns(gameState.getTurnsBeforePlayer());
                 GUIApp.handleCurrentPlayer(gameState.getWhoMoved());
 
                 String moveorpass = gameState.getIsPass() ? " pass" : " moved";
                 System.out.println("Player " + gameState.getWhoMoved() + " just" + moveorpass + ".");
-                System.out.println("Turns until your move: " + gameState.getTurnsBeforePlayer());
+                //System.out.println("Turns until your move: " + gameState.getTurnsBeforePlayer());
             }
             else if (jsonResponse.contains("error")) {
                 ErrorMessage errorMessage = gson.fromJson(jsonResponse, ErrorMessage.class);

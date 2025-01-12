@@ -23,6 +23,15 @@ public class SetUp {
         this.boards = boards;
     }
 
+    public SetUp() {
+        this.create = false;
+        this.gamemode = null;
+        this.board = null;
+        this.playerCount = 0;
+        this.password = null;
+        this.botCount = 0;
+    }
+
     public void setCreate(boolean create) {
         this.create = create;
     }
