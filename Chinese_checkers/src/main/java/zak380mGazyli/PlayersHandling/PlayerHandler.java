@@ -62,6 +62,9 @@ public class PlayerHandler implements Runnable {
                 } else {
                     sendErrorMessage("Unknown command.");
                 }
+                if(room.isGameFinished()) {
+                    room.removePlayer(this);
+                }
             }
 
             if(!isConnected) {

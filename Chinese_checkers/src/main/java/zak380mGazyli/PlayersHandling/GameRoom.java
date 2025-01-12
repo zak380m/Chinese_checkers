@@ -111,4 +111,13 @@ public class GameRoom {
     public int getNumberOfPlayers() {
         return numberOfPlayers;
     }  
+
+    public boolean isGameFinished() {
+        for(int i = 0; i < numberOfBots + numberOfPlayers; i++) {
+            if(gamemode.playerPlace().get(i) == 0) {
+                return true;
+            }
+        }
+        return true;
+    }
 }
