@@ -58,16 +58,16 @@ public class Listener extends Thread {
                         if(createGameRoom(info.getGamemode(), info.getPlayerCount(), info.getBotCount(), info.getPassword(), playerSocket, out, in)) {
                             isSetUp = true;
                         } else {
-                            ErrorMessage errors = new ErrorMessage("Try again, invalid room data.");
-                            out.writeObject(gson.toJson(errors));
+                            setUp = new SetUp(gameBuilder.getGameList(), gameBuilder.getBoardList());
+                            out.writeObject(gson.toJson(setUp));
                         }
                     } else {
                         GameRoom gameRoom = server.joinGameRoom(info.getGamemode(), info.getPassword());
                         if(gameRoom != null) {
                             isSetUp = gameRoom.addPlayer(playerSocket, out, in);
                         } else {
-                            ErrorMessage errors = new ErrorMessage("Try again, invalid room data.");
-                            out.writeObject(gson.toJson(errors));
+                            setUp = new SetUp(gameBuilder.getGameList(), gameBuilder.getBoardList());
+                            out.writeObject(gson.toJson(setUp));
                         }
                     }
                 } catch (ClassNotFoundException e) {
