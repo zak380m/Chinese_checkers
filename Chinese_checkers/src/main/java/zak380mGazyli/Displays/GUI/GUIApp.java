@@ -18,6 +18,8 @@ import zak380mGazyli.Displays.GUI.Popups.GameModePopup;
 import zak380mGazyli.Messages.Command;
 import zak380mGazyli.Misc.Cell;
 
+import java.util.List;
+
 public class GUIApp extends Application {
     private static Stage primaryStage;
     private static ChatBox chatBox;
@@ -43,18 +45,18 @@ public class GUIApp extends Application {
 
         Scene scene = new Scene(mainBox);
 
+        primaryStage.setResizable(false);
         primaryStage.setTitle("Chinese Checkers");
         primaryStage.setScene(scene);
-        primaryStage.show();
+//        primaryStage.show();
         primaryStage.setOnCloseRequest(e -> GUIDisplay.setCurrentCommand(new Command("quit")));
 
-        primaryStage.setResizable(false);
         GUIApp.primaryStage = primaryStage;
     }
 
-    public static void handleSetUpGameMode() {
+    public static void handleSetUpGameMode(List<String> gamemodes, List<String> boards) {
     Platform.runLater(() -> {
-        GameModePopup popup = new GameModePopup();
+        GameModePopup popup = new GameModePopup(gamemodes, boards);
         popup.show();
     });
 }
@@ -77,9 +79,6 @@ public class GUIApp extends Application {
     }
 
     public static void handleCurrentPlayer(int player) {
-        Platform.runLater(() -> {
-            BoardPane.setCurrentPlayer(player + 1);
-        });
     }
 
     public static void displayError(String message) {
@@ -88,5 +87,9 @@ public class GUIApp extends Application {
 
     public static void displayMessage(String message) {
         Platform.runLater(() -> chatBox.displayMessage(message));
+    }
+
+    public static void show() {
+        primaryStage.show();
     }
 }

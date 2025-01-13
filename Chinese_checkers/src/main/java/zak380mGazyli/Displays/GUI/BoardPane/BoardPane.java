@@ -75,8 +75,4 @@ public class BoardPane extends Pane {
             }
         }
     }
-
-    public static void setCurrentPlayer(int i) {
-        System.out.println("Player " + i + " is moving.");
-    }
 }
