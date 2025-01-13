@@ -1,8 +1,10 @@
 package zak380mGazyli.Misc;
 
+import zak380mGazyli.Messages.Command;
+
 import java.util.List;
 
-public class SetUp {
+public class SetUp extends Command {
     private boolean create;
     private String gamemode;
     private String board;
