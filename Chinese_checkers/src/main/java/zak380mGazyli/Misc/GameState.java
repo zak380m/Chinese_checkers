@@ -9,10 +9,12 @@ public class GameState {
     private String playerColor;
     private int turnCount;
     private Map<Integer, Integer> playerPlace;
+    private int currentPlayerTurn;
 
     private boolean isPass;
 
-    public GameState(Cell[][] boardState, int playerNumber, int whoMoved, Map<Integer, Integer> playerPlace, boolean isPass, String playerColor, int turnCount) {
+    public GameState(int currentPlayerTurn, Cell[][] boardState, int playerNumber, int whoMoved, Map<Integer, Integer> playerPlace, boolean isPass, String playerColor, int turnCount) {
+        this.currentPlayerTurn = currentPlayerTurn;
         this.boardState = boardState;
         this.playerNumber = playerNumber;
         this.whoMoved = whoMoved;
@@ -48,5 +50,9 @@ public class GameState {
 
     public int getTurnCount() {
         return turnCount;
+    }
+
+    public int getCurrentPlayerTurn() {
+        return currentPlayerTurn;
     }
 }

@@ -77,6 +77,7 @@ public class GameRoom {
         players.put(index, playerHandler);
         playerHandler.setPlayerInRoom(index, this, gamemode);
         realNumberOfPlayers++;
+        System.out.println("Real players in room(" + roomId + "): " + realNumberOfPlayers);
         if(realNumberOfPlayers == numberOfPlayers) {
             for(int i = 0; i < numberOfPlayers; i++) {
                 System.out.println("Player " + i + " index : " + players.get(i).getPlayerNumber());
@@ -123,7 +124,7 @@ public class GameRoom {
 
     public String currentGameState(int playerNumber) {
         Gson gson = new Gson();
-        GameState data = new GameState(board.getBoard(), playerNumber, (gamemode.getTurn()-1+numberOfPlayers)%numberOfPlayers
+        GameState data = new GameState(gamemode.getTurn(), board.getBoard(), playerNumber, (gamemode.getTurn()-1+numberOfPlayers)%numberOfPlayers
         , gamemode.playerPlace(), gamemode.isPass(), gamemode.getPlayerColor(playerNumber), gamemode.getTurnCount());
         return gson.toJson(data);
     }

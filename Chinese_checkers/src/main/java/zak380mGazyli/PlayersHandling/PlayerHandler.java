@@ -67,7 +67,6 @@ public class PlayerHandler implements Runnable {
         try {
             while (isConnected) {
                 while (!isReady){
-                    System.out.println("Player " + playerNumber + " is freaky.");
                     gettingReady();
                 }
                 String jsonString = (String) in.readObject();
@@ -81,11 +80,9 @@ public class PlayerHandler implements Runnable {
                     sendErrorMessage("Unknown command.");
                 }
                 if(room.isGameFinished()) {
-                    System.out.println("here? - run/isGameFinished");
                     room.removePlayer(playerNumber);
                 }
             }
-
             if(!isConnected) {
                 System.out.println("Player " + playerNumber + " disconnected.");
                 handleDisconnection();
@@ -129,7 +126,7 @@ public class PlayerHandler implements Runnable {
     }
 
     private void handleQuitCommand(Command command) {
-        handleDisconnection();
+        isConnected = false;
     }
 
     private void handleMessageCommand(Command command) {
@@ -154,7 +151,7 @@ public class PlayerHandler implements Runnable {
             out.writeObject(gson.toJson(new ErrorMessage(message)));
             out.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Failed to send error message to a player - connection lost.");
         }
     }
 
@@ -163,14 +160,13 @@ public class PlayerHandler implements Runnable {
             out.writeObject(jsonReply);
             out.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Failed to send json reply to a player - connection lost.");
         }
     }
 
     public void handleDisconnection() {
-        isConnected = false;
-        System.out.println("here? - handleDisconnection");
         room.removePlayer(playerNumber);
+        isConnected = false;
         try {
             socket.close();
         } catch (IOException e) {

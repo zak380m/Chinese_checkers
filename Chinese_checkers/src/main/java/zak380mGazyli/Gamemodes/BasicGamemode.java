@@ -155,6 +155,20 @@ public class BasicGamemode implements Gamemode {
             updatePlayerRanking(currentPlayerTurn);
         }
         nextTurn();
+        isLastPlace();
+    }
+
+    private void isLastPlace() {
+        int lastPlace = 0;
+        for (int i = 0; i < numberOfPlayers; i++) {
+            if (playerPlace.get(i) != 0) {
+                lastPlace++;
+            }
+        }
+        if(lastPlace == numberOfPlayers - 1) {
+            finishedPlayersRank[rankCounter - 1] = currentPlayerTurn;
+            playerPlace.put(currentPlayerTurn, rankCounter);
+        }
     }
 
     private boolean checkPlayerWon(Board board, int player) {

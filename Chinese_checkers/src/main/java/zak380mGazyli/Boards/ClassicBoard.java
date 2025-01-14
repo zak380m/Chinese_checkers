@@ -84,12 +84,11 @@ public class ClassicBoard implements Board {
     }
 
     public void colorTriangle2P(int triangle_num, String color) {
-        Map<Integer, Cell[]> triangles = new HashMap<>();
-        triangles.put(1, new Cell[]{cells[0][12], cells[1][11], cells[1][13], cells[2][10], cells[2][12], cells[2][14], cells[3][9], cells[3][11], cells[3][13], cells[3][15], cells[4][8], cells[4][10], cells[4][12], cells[4][14], cells[4][16]});
-        triangles.put(4, new Cell[]{cells[16][12], cells[15][11], cells[15][13], cells[14][10], cells[14][12], cells[14][14], cells[13][9], cells[13][11], cells[13][13], cells[13][15], cells[12][8], cells[12][10], cells[12][12], cells[12][14], cells[12][16]});
-        for (Cell cell : triangles.get(triangle_num)) {
-            cell.setSymbol("O");
-            cell.setColor(color);
+        triangles.put(1, new int[][]{{0, 12}, {1, 11}, {1, 13}, {2, 10}, {2, 12}, {2, 14}, {3, 9}, {3, 11}, {3, 13}, {3, 15}, {4, 8}, {4, 10}, {4, 12}, {4, 14}, {4, 16}});
+        triangles.put(4, new int[][]{{16, 12}, {15, 11}, {15, 13}, {14, 10}, {14, 12}, {14, 14}, {13, 9}, {13, 11}, {13, 13}, {13, 15}, {12, 8}, {12, 10}, {12, 12}, {12, 14}, {12, 16}});
+        for (int[] cord : triangles.get(triangle_num)) {
+            cells[cord[0]][cord[1]].setColor(color);
+            cells[cord[0]][cord[1]].setSymbol("O");
         }
     }
 }
