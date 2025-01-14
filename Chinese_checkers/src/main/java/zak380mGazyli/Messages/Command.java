@@ -5,6 +5,9 @@ public class Command {
     private int[] args;
     private String textArg;
 
+    public Command() {
+    }
+
     public Command(String name) {
         this.name = name;
     }

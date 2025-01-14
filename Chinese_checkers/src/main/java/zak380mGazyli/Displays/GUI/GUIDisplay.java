@@ -4,10 +4,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import javafx.application.Application;
 import zak380mGazyli.Displays.Display;
-import zak380mGazyli.GameState;
 import zak380mGazyli.Messages.Command;
 import zak380mGazyli.Messages.ErrorMessage;
 import zak380mGazyli.Messages.Message;
+import zak380mGazyli.Misc.GameState;
+import zak380mGazyli.Misc.SetUp;
 
 public class GUIDisplay implements Display {
     private final Gson gson;
@@ -26,18 +27,22 @@ public class GUIDisplay implements Display {
     @Override
     public void displayInterface(String jsonResponse) {
         try {
-            if (jsonResponse.contains("boardState")) {
+            if (jsonResponse.contains("create")) {
+                SetUp setUp = gson.fromJson(jsonResponse, SetUp.class);
+
+                GUIApp.handleSetUpGameMode(setUp.getGamemodes(), setUp.getBoards());
+            } else if (jsonResponse.contains("boardState")) {
                 GameState gameState = gson.fromJson(jsonResponse, GameState.class);
+
+                GUIApp.handleCurrentPlayer(gameState.getWhoMoved() + 1);
                 GUIApp.handleDisplayBoard(gameState.getBoardState());
-                GUIApp.handleRemaningTurns(gameState.getTurnsBeforePlayer());
-                GUIApp.handleCurrentPlayer(gameState.getWhoMoved());
 
                 String moveorpass = gameState.getIsPass() ? " pass" : " moved";
                 System.out.println("Player " + gameState.getWhoMoved() + " just" + moveorpass + ".");
-                System.out.println("Turns until your move: " + gameState.getTurnsBeforePlayer());
             }
             else if (jsonResponse.contains("error")) {
                 ErrorMessage errorMessage = gson.fromJson(jsonResponse, ErrorMessage.class);
+
                 GUIApp.displayError(errorMessage.getError());
 
                 System.out.println("Error: " + errorMessage.getError());
@@ -45,11 +50,7 @@ public class GUIDisplay implements Display {
             else if (jsonResponse.contains("message")) {
                 Message message = gson.fromJson(jsonResponse, Message.class);
                 if (message.getMessage() != null) {
-                    if (message.getMessage().contains("setUpGameMode")) {
-                        GUIApp.handleSetUpGameMode();
-                    } else {
-                        GUIApp.displayMessage(message.getMessage());
-                    }
+                    GUIApp.displayMessage(message.getMessage());
 
                     System.out.println("Message: " + message.getMessage());
                 }

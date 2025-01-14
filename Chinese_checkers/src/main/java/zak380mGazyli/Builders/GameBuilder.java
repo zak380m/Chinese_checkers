@@ -7,16 +7,22 @@ import zak380mGazyli.Builders.GamemodeBuilders.DummyGamemodeBuilder;
 import zak380mGazyli.Builders.GamemodeBuilders.GamemodeBuilder;
 import zak380mGazyli.Builders.GamemodeBuilders.SuperGamemodeBuilder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GameBuilder {
     private static final Map<String, GameComponents> gameList = new HashMap<>();
-    private final String gameName;
+    private String gameName;
+    private static final List<String> gameNameList = new ArrayList<>();
 
-    public GameBuilder(String gameName) {
-        this.gameName = gameName;
+    public GameBuilder() {
         populateGamelist();
+    }
+
+    public void setGameName(String gameName) {
+        this.gameName = gameName;
     }
 
     public void addGame(String name, GamemodeBuilder gamemodeBuilder, BoardBuilder boardBuilder) {
@@ -41,5 +47,14 @@ public class GameBuilder {
         addGame("DummyGame", new DummyGamemodeBuilder(), new ClassicBoardBuilder());
         addGame("BasicGame", new BasicGamemodeBuilder(), new ClassicBoardBuilder());
         addGame("SuperGame", new SuperGamemodeBuilder(), new ClassicBoardBuilder());
+        gameNameList.addAll(gameList.keySet());
+    }
+
+    public List<String> getGameList() {
+        return gameNameList;
+    }
+
+    public List<String> getBoardList() {
+        return new ArrayList<>();
     }
 }

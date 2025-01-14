@@ -32,6 +32,11 @@ public class BasicGamemode implements Gamemode {
     }
 
     @Override
+    public String getName() {
+        return "BasicGame";
+    }
+
+    @Override
     public boolean setNumberOfPlayers(int numberOfPlayers, Board board) {
         if (numberOfPlayers != 2 && numberOfPlayers != 3 && numberOfPlayers != 4 && numberOfPlayers != 6) {
             return false; 
@@ -150,6 +155,20 @@ public class BasicGamemode implements Gamemode {
             updatePlayerRanking(currentPlayerTurn);
         }
         nextTurn();
+        isLastPlace();
+    }
+
+    private void isLastPlace() {
+        int lastPlace = 0;
+        for (int i = 0; i < numberOfPlayers; i++) {
+            if (playerPlace.get(i) != 0) {
+                lastPlace++;
+            }
+        }
+        if(lastPlace == numberOfPlayers - 1) {
+            finishedPlayersRank[rankCounter - 1] = currentPlayerTurn;
+            playerPlace.put(currentPlayerTurn, rankCounter);
+        }
     }
 
     private boolean checkPlayerWon(Board board, int player) {
@@ -207,5 +226,15 @@ public class BasicGamemode implements Gamemode {
             currentPlayerTurn = (currentPlayerTurn + 1) % numberOfPlayers;
         } while (playerPlace.get(currentPlayerTurn) != 0);
         turnCount++;
+    }
+
+    @Override
+    public int getTurnCount() {
+        return turnCount;
+    }
+
+    @Override
+    public String getPlayerColor(int playerNumber) {
+        return playerColors.get(playerNumber);
     }
 }

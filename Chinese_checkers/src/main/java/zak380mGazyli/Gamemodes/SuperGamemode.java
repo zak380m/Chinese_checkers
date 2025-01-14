@@ -32,6 +32,11 @@ public class SuperGamemode implements Gamemode {
     }
 
     @Override
+    public String getName() {
+        return "SuperGame";
+    }
+
+    @Override
     public boolean setNumberOfPlayers(int numberOfPlayers, Board board) {
         if (numberOfPlayers != 2 && numberOfPlayers != 3 && numberOfPlayers != 4 && numberOfPlayers != 6) {
             return false;
@@ -128,7 +133,7 @@ public class SuperGamemode implements Gamemode {
                     int newY = y + dir[0] * (step + 1);
                     int newX = x + dir[1] * (step + 1);
 
-                    if (newX < 0 || newX >= board.getBoard().length || newY < 0 || newY >= board.getBoard()[0].length) {
+                    if (newY < 0 || newY >= board.getBoard().length || newX < 0 || newX >= board.getBoard()[0].length) {
                         break;  
                     }
 
@@ -162,6 +167,20 @@ public class SuperGamemode implements Gamemode {
             updatePlayerRanking(currentPlayerTurn);
         }
         nextTurn();
+        isLastPlace();
+    }
+
+    private void isLastPlace() {
+        int lastPlace = 0;
+        for (int i = 0; i < numberOfPlayers; i++) {
+            if (playerPlace.get(i) != 0) {
+                lastPlace++;
+            }
+        }
+        if(lastPlace == numberOfPlayers - 1) {
+            finishedPlayersRank[rankCounter - 1] = currentPlayerTurn;
+            playerPlace.put(currentPlayerTurn, rankCounter);
+        }
     }
 
     private boolean checkPlayerWon(Board board, int player) {
@@ -219,5 +238,15 @@ public class SuperGamemode implements Gamemode {
             currentPlayerTurn = (currentPlayerTurn + 1) % numberOfPlayers;
         } while (playerPlace.get(currentPlayerTurn) != 0);
         turnCount++;
+    }
+
+    @Override
+    public int getTurnCount() {
+        return turnCount;
+    }
+
+    @Override
+    public String getPlayerColor(int playerNumber) {
+        return playerColors.get(playerNumber);
     }
 }
