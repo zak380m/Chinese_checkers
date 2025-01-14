@@ -133,7 +133,7 @@ public class SuperGamemode implements Gamemode {
                     int newY = y + dir[0] * (step + 1);
                     int newX = x + dir[1] * (step + 1);
 
-                    if (newX < 0 || newX >= board.getBoard().length || newY < 0 || newY >= board.getBoard()[0].length) {
+                    if (newY < 0 || newY >= board.getBoard().length || newX < 0 || newX >= board.getBoard()[0].length) {
                         break;  
                     }
 

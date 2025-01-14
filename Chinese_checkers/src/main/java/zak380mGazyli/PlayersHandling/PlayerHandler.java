@@ -129,9 +129,7 @@ public class PlayerHandler implements Runnable {
     }
 
     private void handleQuitCommand(Command command) {
-        System.out.println("here? - handleQuitCommand");
-        room.removePlayer(playerNumber);
-        isReady = false;
+        handleDisconnection();
     }
 
     private void handleMessageCommand(Command command) {

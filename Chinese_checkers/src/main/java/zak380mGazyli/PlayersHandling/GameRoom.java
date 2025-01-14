@@ -117,7 +117,7 @@ public class GameRoom {
 
     public synchronized void broadcastCurrentGameState() {
         for (int i = 0; i < numberOfPlayers; i++) {
-            players.get(i).sendJsonReply(currentGameState(players.get(i).getPlayerNumber()));
+            if(players.get(i) != null) players.get(i).sendJsonReply(currentGameState(players.get(i).getPlayerNumber()));
         }
     }
 
