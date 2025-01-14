@@ -4,14 +4,22 @@ import java.io.*;
 import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
+
 import com.google.gson.Gson;
 
+import zak380mGazyli.Server;
+import zak380mGazyli.Boards.Board;
+import zak380mGazyli.Builders.GameBuilder;
+import zak380mGazyli.Builders.BoardBuilders.BoardBuilder;
+import zak380mGazyli.Builders.GamemodeBuilders.GamemodeBuilder;
 import zak380mGazyli.Gamemodes.Gamemode;
 import zak380mGazyli.Messages.Command;
 import zak380mGazyli.Messages.ErrorMessage;
 import zak380mGazyli.Messages.Message;
+import zak380mGazyli.Misc.SetUp;
 
 public class PlayerHandler implements Runnable {
+    private Server server;
     private Socket socket;
     private GameRoom room;
     private ObjectOutputStream out;
@@ -21,16 +29,22 @@ public class PlayerHandler implements Runnable {
     private Boolean isConnected;
     private Gson gson;
     private Map<String, CommandHandler> commandHandlers;
+    private volatile boolean isReady;
+    private GameBuilder gameBuilder;
 
-    public PlayerHandler(Socket socket, ObjectOutputStream out, ObjectInputStream in, GameRoom room, int playerNumber) {
+    public PlayerHandler(Socket socket, Server server) {
         this.socket = socket;
-        this.out = out;
-        this.in = in;
-        this.room = room;
-        this.gamemode = room.getGamemode();
-        this.playerNumber = playerNumber;
+        this.server = server;
         this.isConnected = true;
+        this.isReady = false;
         this.gson = new Gson();
+        this.gameBuilder = new GameBuilder();
+        try {
+            this.out = new ObjectOutputStream(socket.getOutputStream());
+            this.in = new ObjectInputStream(socket.getInputStream());
+        } catch (IOException e) {
+            System.out.println("Failed to create input/output streams for player.");
+        }
         initializeCommands();
     }
 
@@ -52,6 +66,10 @@ public class PlayerHandler implements Runnable {
     public void run() {
         try {
             while (isConnected) {
+                while (!isReady){
+                    System.out.println("Player " + playerNumber + " is freaky.");
+                    gettingReady();
+                }
                 String jsonString = (String) in.readObject();
                 Command command = gson.fromJson(jsonString, Command.class);
                 System.out.println("Player " + playerNumber + " sent command: " + command.getName());
@@ -63,7 +81,8 @@ public class PlayerHandler implements Runnable {
                     sendErrorMessage("Unknown command.");
                 }
                 if(room.isGameFinished()) {
-                    room.removePlayer(this);
+                    System.out.println("here? - run/isGameFinished");
+                    room.removePlayer(playerNumber);
                 }
             }
 
@@ -110,7 +129,9 @@ public class PlayerHandler implements Runnable {
     }
 
     private void handleQuitCommand(Command command) {
-        handleDisconnection();
+        System.out.println("here? - handleQuitCommand");
+        room.removePlayer(playerNumber);
+        isReady = false;
     }
 
     private void handleMessageCommand(Command command) {
@@ -150,7 +171,8 @@ public class PlayerHandler implements Runnable {
 
     public void handleDisconnection() {
         isConnected = false;
-        room.removePlayer(this);
+        System.out.println("here? - handleDisconnection");
+        room.removePlayer(playerNumber);
         try {
             socket.close();
         } catch (IOException e) {
@@ -160,5 +182,82 @@ public class PlayerHandler implements Runnable {
 
     public int getPlayerNumber() {
         return playerNumber;
+    }
+
+    public void setPlayerInRoom(int playerNumber, GameRoom room, Gamemode gamemode) {
+        this.playerNumber = playerNumber;
+        this.room = room;
+        this.gamemode = gamemode;
+    }
+
+    public void sendSetUp(SetUp setUp) {
+        System.out.println("Sending setup to player");
+        try {
+            out.writeObject(gson.toJson(setUp));
+            out.flush();
+        } catch (IOException e) {
+            sendErrorMessage("Disconection?");
+        }
+    }
+
+    public SetUp getSetUp() {
+        System.out.println("Getting setup from player");
+        try {
+            String jsonString = (String) in.readObject();
+            return gson.fromJson(jsonString, SetUp.class);
+        } catch (IOException | ClassNotFoundException e) {
+            sendErrorMessage("Wrong setup.");
+        }
+        return null;
+    }
+
+    private void gettingReady() {
+        try {
+            SetUp setUp = new SetUp(gameBuilder.getGameList(), gameBuilder.getBoardList());
+            sendSetUp(setUp);
+            try {
+                System.out.println("Waiting for setup.");
+                SetUp info = getSetUp();
+                if (info.isCreate()) {
+                    if(createGameRoom(info.getGamemode(), info.getPlayerCount(), info.getBotCount(), info.getPassword())) isReady = true;
+                } else if (!info.isCreate()) {
+                    GameRoom gameRoom = server.joinGameRoom(info.getGamemode(), info.getPassword());
+                    if(gameRoom != null) isReady = gameRoom.addPlayer(this);
+                }
+            } catch (Exception e) {
+                sendErrorMessage("Try again, wrong setup.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean createGameRoom(String gamemodeName, int playerCount, int botCount, String password) {
+        System.out.println("Setting up gamemode: " + gamemodeName);
+        gameBuilder.setGameName(gamemodeName);
+        GamemodeBuilder gamemodeBuilder = gameBuilder.getGamemodeBuilder();
+        BoardBuilder boardBuilder = gameBuilder.getBoardBuilder();
+        boardBuilder.buildBoard(playerCount);
+        if(boardBuilder.getBoard() == null) {
+            System.out.println("Board setup failed.");
+            return false;
+        }
+        Board board = boardBuilder.getBoard();
+        gamemodeBuilder.buildGamemode(playerCount, board);
+        if(gamemodeBuilder.getGamemode() == null) {
+            System.out.println("Gamemode setup failed.");
+            return false;
+        }
+        Gamemode gamemode = gamemodeBuilder.getGamemode();
+        System.out.println("Gamemode set up is done.");
+        GameRoom gameRoom = server.createGameRoom(gamemode, board, password, playerCount, botCount);
+        if(gameRoom != null) {
+            System.out.println("Game room created.");
+            if(gameRoom.addPlayer(this)) return true;
+        } else {
+            System.out.println("Game room creation failed.");
+            return false;
+        }
+        return false;
     }
 }

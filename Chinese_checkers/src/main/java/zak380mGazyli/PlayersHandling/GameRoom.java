@@ -1,37 +1,41 @@
 package zak380mGazyli.PlayersHandling;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.*;
 import java.util.*;
 
 import com.google.gson.Gson;
 
+import zak380mGazyli.Server;
 import zak380mGazyli.Boards.Board;
 import zak380mGazyli.Bots.Bot;
 import zak380mGazyli.Gamemodes.Gamemode;
 import zak380mGazyli.Misc.GameState;
 
 public class GameRoom {
+    private Server server;
     private String password;
     private int roomId;
     private int numberOfPlayers;
     private int numberOfBots;
-    private List<PlayerHandler> players;
-    private List<Bot> bots;
+    private Map<Integer, PlayerHandler> players;
+    private Map<Integer, Bot> bots;
     private Board board;
     private Gamemode gamemode;
+    private int realNumberOfPlayers;
 
-    public GameRoom(Gamemode gamemode, Board board, String password, int numberOfPlayers, int numberOfBots, int roomId) {
+    public GameRoom(Gamemode gamemode, Board board, String password, int numberOfPlayers, int numberOfBots, int roomId, Server server) {
         this.gamemode = gamemode;
+        this.server = server;
         this.board = board;
         this.password = password;
         this.numberOfPlayers = numberOfPlayers;
         this.numberOfBots = numberOfBots;
         this.roomId = roomId;
-        bots = new ArrayList<>();
-        players = new ArrayList<>();
-        
+        this.realNumberOfPlayers = numberOfBots;
+        bots = new HashMap<>();
+        players = new HashMap<>();
+        for (int i = 0; i < numberOfPlayers; i++) {
+            players.put(i, null);
+        }
     }
 
     public String getGamemodeName() {
@@ -47,14 +51,38 @@ public class GameRoom {
     }
 
     public boolean areThereMissingPlayers() {
-        return (numberOfPlayers - players.size() > 0);
+        boolean areThereMissingPlayers = false;
+        for (int i = 0; i < numberOfPlayers; i++) {
+            if (players.get(i) == null) {
+                areThereMissingPlayers = true;
+                break;
+            }
+        }
+        return areThereMissingPlayers;
     }
 
-    public synchronized boolean addPlayer(Socket playerSocket, ObjectOutputStream out, ObjectInputStream in) {
-        if(players.size() >= numberOfPlayers) return false;
-        PlayerHandler playerHandler = new PlayerHandler(playerSocket, out, in, this, players.size());
-        players.add(playerHandler);
-        new Thread(playerHandler).start();
+    public synchronized boolean addPlayer(PlayerHandler playerHandler) {
+        boolean areThereMissingPlayers = false;
+        int index = 0;
+        for (int i = 0; i < numberOfPlayers; i++) {
+            if (players.get(i) == null) {
+                index = i;
+                areThereMissingPlayers = true;
+                break;
+            }
+        }
+        if (!areThereMissingPlayers) {
+            return false;
+        }
+        players.put(index, playerHandler);
+        playerHandler.setPlayerInRoom(index, this, gamemode);
+        realNumberOfPlayers++;
+        if(realNumberOfPlayers == numberOfPlayers) {
+            for(int i = 0; i < numberOfPlayers; i++) {
+                System.out.println("Player " + i + " index : " + players.get(i).getPlayerNumber());
+            }
+            broadcastCurrentGameState();
+        }
         System.out.println("Player added to room: " + roomId);
         return true;
     }
@@ -72,24 +100,24 @@ public class GameRoom {
     }
 
     public synchronized void broadcastToAllExceptOne(String jsonToBroadcast, int playerNumber) {
-        for (PlayerHandler player : players) {
-            if (player.getPlayerNumber() != playerNumber) {
-                player.sendJsonReply(jsonToBroadcast);
+        for (int i = 0; i < numberOfPlayers; i++) {
+            if (players.get(i).getPlayerNumber() != playerNumber) {
+                players.get(i).sendJsonReply(jsonToBroadcast);
             }
         }
     }
 
     public synchronized void sendToAPlayer(String jsonToSend, int playerNumber) {
-        for (PlayerHandler player : players) {
-            if (player.getPlayerNumber() == playerNumber) {
-                player.sendJsonReply(jsonToSend);
+        for (int i = 0; i < numberOfPlayers; i++) {
+            if (players.get(i).getPlayerNumber() == playerNumber) {
+                players.get(i).sendJsonReply(jsonToSend);
             }
         }
     }
 
     public synchronized void broadcastCurrentGameState() {
-        for (PlayerHandler player : players) {
-            player.sendJsonReply(currentGameState(player.getPlayerNumber()));
+        for (int i = 0; i < numberOfPlayers; i++) {
+            players.get(i).sendJsonReply(currentGameState(players.get(i).getPlayerNumber()));
         }
     }
 
@@ -100,8 +128,14 @@ public class GameRoom {
         return gson.toJson(data);
     }
 
-    public synchronized void removePlayer(PlayerHandler player) {
-        players.remove(player);
+    public synchronized void removePlayer(int index) {
+        System.out.println("yolo I'm (" + index + ") leaving the game room " + roomId);
+        players.put(index, null);
+        realNumberOfPlayers--;
+        if(isGameFinished() && realNumberOfPlayers == 0) {
+            System.out.println("Game room " + roomId + " is finished.");
+            server.deleteGameRoom(this);
+        }
     }
 
     public Gamemode getGamemode() {
@@ -115,7 +149,7 @@ public class GameRoom {
     public boolean isGameFinished() {
         for(int i = 0; i < numberOfBots + numberOfPlayers; i++) {
             if(gamemode.playerPlace().get(i) == 0) {
-                return true;
+                return false;
             }
         }
         return true;
