@@ -16,6 +16,10 @@ import zak380mGazyli.Misc.Color;
 import zak380mGazyli.Misc.GameState;
 import zak380mGazyli.Misc.SetUp;
 
+/**
+ * The CLIDisplay class implements the Display interface and provides methods to display the game interface,
+ * handle commands, and manage the game state using a command-line interface.
+ */
 public class CLIDisplay implements Display {
 
     private Scanner scanner;
@@ -23,16 +27,26 @@ public class CLIDisplay implements Display {
     Map<String, CommandHandler> commandHandlers;
     private Map<String, String> commandDescriptions;
 
+    /**
+     * Constructs a new CLIDisplay instance.
+     * Initializes the scanner, Gson object, and command handlers.
+     */
     public CLIDisplay() {
         scanner = new Scanner(System.in);
         gson = new Gson();
         initializeCommands();
     }
 
+    /**
+     * Interface for handling commands.
+     */
     private interface CommandHandler {
         String handle();
     }
 
+    /**
+     * Initializes the command handlers and their descriptions.
+     */
     private void initializeCommands() {
         commandHandlers = new HashMap<>();
         commandDescriptions = new HashMap<>();
@@ -59,6 +73,12 @@ public class CLIDisplay implements Display {
         commandDescriptions.put("pass", "Pass your turn.");
     }
 
+    /**
+     * Displays the game interface based on the provided JSON response.
+     * Parses the JSON response and updates the game state accordingly.
+     *
+     * @param jsonResponse The JSON response containing game state information.
+     */
     @Override
     public void displayInterface(String jsonResponse) {
         clearTerminal();
@@ -89,6 +109,12 @@ public class CLIDisplay implements Display {
         }
     }
 
+    /**
+     * Retrieves the current command as a JSON string.
+     * Waits for a command to be entered if none is available.
+     *
+     * @return The current command as a JSON string.
+     */
     @Override
     public String getCommands() {
         System.out.print("> ");
@@ -100,12 +126,18 @@ public class CLIDisplay implements Display {
         String command = scanner.nextLine().toLowerCase();
         CommandHandler commandHandler = commandHandlers.get(command);
         if (commandHandler != null) {
-            return commandHandler.handle();  
+            return commandHandler.handle();
         } else {
             return gson.toJson(new Command("Unknown command."));
         }
     }
 
+    /**
+     * Handles the "move" command.
+     * Prompts the user to enter the start and end coordinates for the move.
+     *
+     * @return The move command as a JSON string.
+     */
     private String handleMoveCommand() {
         try {
             System.out.println("Enter startX, startY, endX, endY:");
@@ -113,7 +145,7 @@ public class CLIDisplay implements Display {
             int startY = scanner.nextInt();
             int endX = scanner.nextInt();
             int endY = scanner.nextInt();
-            scanner.nextLine();  
+            scanner.nextLine();
             Command moveCommand = new Command("move", new int[] { startX, startY, endX, endY });
             return gson.toJson(moveCommand);
         } catch (Exception e) {
@@ -122,22 +154,44 @@ public class CLIDisplay implements Display {
         }
     }
 
+    /**
+     * Handles the "pass" command.
+     *
+     * @return The pass command as a JSON string.
+     */
     private String handlePassCommand() {
         Command passCommand = new Command("pass");
         return gson.toJson(passCommand);
     }
 
+    /**
+     * Handles the "display" command.
+     *
+     * @return The display command as a JSON string.
+     */
     private String handleDisplayCommand() {
         Command displayCommand = new Command("display");
         return gson.toJson(displayCommand);
     }
 
+    /**
+     * Handles the "quit" command.
+     * Prints a quitting message.
+     *
+     * @return The quit command as a JSON string.
+     */
     private String handleQuitCommand() {
         Command quitCommand = new Command("quit");
         System.out.println("Quitting the game...");
         return gson.toJson(quitCommand);
     }
 
+    /**
+     * Handles the "setupgamemode" command.
+     * Prompts the user to enter the game mode setup details.
+     *
+     * @return The setup game mode command as a JSON string.
+     */
     private String handleSetUpGamemodeCommand() {
         try {
             SetUp setUp = new SetUp();
@@ -169,6 +223,12 @@ public class CLIDisplay implements Display {
         }
     }
 
+    /**
+     * Handles the "help" command.
+     * Lists and explains all available commands.
+     *
+     * @return The help command as a JSON string.
+     */
     private String handleHelpCommand() {
         System.out.println("Available commands:");
         for (String command : commandDescriptions.keySet()) {
@@ -177,12 +237,18 @@ public class CLIDisplay implements Display {
         return getCommands();
     }
 
+    /**
+     * Handles the "message" command.
+     * Prompts the user to enter a message and the player number to send it to.
+     *
+     * @return The message command as a JSON string.
+     */
     private String handleMessageCommand() {
         try {
             System.out.println("Enter message, playerNumber(or -1 for all):");
             String message = scanner.nextLine();
             int playerNumber = scanner.nextInt();
-            scanner.nextLine();  
+            scanner.nextLine();
             Command setMessageCommand = new Command("message", new int[] { playerNumber }, message);
             return gson.toJson(setMessageCommand);
         } catch (Exception e) {
@@ -191,11 +257,19 @@ public class CLIDisplay implements Display {
         }
     }
 
+    /**
+     * Closes the scanner.
+     */
     @Override
     public void quit() {
         scanner.close();
     }
 
+    /**
+     * Displays the game board.
+     *
+     * @param board The game board represented as a 2D array of Cell objects.
+     */
     private void displayBoard(Cell[][] board) {
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[0].length; j++) {
@@ -205,12 +279,15 @@ public class CLIDisplay implements Display {
         }
     }
 
+    /**
+     * Clears the terminal screen.
+     */
     private void clearTerminal() {
         try {
             if (System.getProperty("os.name").contains("Windows")) {
                 new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
             } else {
-                System.out.print("\033[H\033[2J");  
+                System.out.print("\033[H\033[2J");
                 System.out.flush();
             }
         } catch (IOException | InterruptedException ex) {
@@ -218,4 +295,3 @@ public class CLIDisplay implements Display {
         }
     }
 }
-

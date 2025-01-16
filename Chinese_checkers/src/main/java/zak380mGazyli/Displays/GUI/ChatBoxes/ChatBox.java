@@ -11,13 +11,22 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import zak380mGazyli.Displays.GUI.GUIDisplay;
+import zak380mGazyli.Displays.GUIDisplay;
 import zak380mGazyli.Messages.Command;
 
+/**
+ * The ChatBox class represents a GUI component for a chat interface.
+ * It extends VBox and contains a chat log and an input field for sending messages.
+ */
 public class ChatBox extends VBox {
     private final TextFlow chatLog;
     private final TextField inputField;
 
+    /**
+     * Constructs a new ChatBox.
+     * Initializes the chat log, input field, and send button.
+     * Sets up the layout and event handling for sending messages.
+     */
     public ChatBox() {
         chatLog = new TextFlow();
         chatLog.setPadding(new Insets(10));
@@ -44,6 +53,11 @@ public class ChatBox extends VBox {
         getChildren().addAll(scrollPane, inputBox);
     }
 
+    /**
+     * Sends the message entered in the input field.
+     * If the message is not empty, it creates a new Command and displays the message in the chat log.
+     * Clears the input field after sending the message.
+     */
     private void sendMessage() {
         String message = inputField.getText();
         if (!message.isEmpty()) {
@@ -53,12 +67,24 @@ public class ChatBox extends VBox {
         }
     }
 
+    /**
+     * Displays an error message in the chat log.
+     * The error message is styled in red.
+     *
+     * @param message The error message to display.
+     */
     public void displayError(String message) {
         Text errorText = new Text("Error: " + message + "\n");
         errorText.setStyle("-fx-fill: red;");
         chatLog.getChildren().add(errorText);
     }
 
+    /**
+     * Displays a message in the chat log.
+     * The message is styled in black.
+     *
+     * @param message The message to display.
+     */
     public void displayMessage(String message) {
         Text messageText = new Text(message + "\n");
         messageText.setStyle("-fx-fill: black;");

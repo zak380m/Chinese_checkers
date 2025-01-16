@@ -1,21 +1,28 @@
-package zak380mGazyli.Displays.GUI;
+package zak380mGazyli.Displays;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import javafx.application.Application;
-import zak380mGazyli.Displays.Display;
+import zak380mGazyli.Displays.GUI.GUIApp;
 import zak380mGazyli.Messages.Command;
 import zak380mGazyli.Messages.ErrorMessage;
 import zak380mGazyli.Messages.Message;
 import zak380mGazyli.Misc.GameState;
 import zak380mGazyli.Misc.SetUp;
 
+/**
+ * The GUIDisplay class implements the Display interface and provides methods to display the game interface,
+ * handle commands, and manage the game state using JavaFX.
+ */
 public class GUIDisplay implements Display {
     private final Gson gson;
     public static volatile Command currentCommand;
     private static boolean javafxStarted = false;
 
-
+    /**
+     * Constructs a new GUIDisplay instance.
+     * Initializes the Gson object and starts the JavaFX application if it hasn't been started yet.
+     */
     public GUIDisplay() {
         gson = new Gson();
         if (!javafxStarted) {
@@ -24,6 +31,12 @@ public class GUIDisplay implements Display {
         }
     }
 
+    /**
+     * Displays the game interface based on the provided JSON response.
+     * Parses the JSON response and updates the game state accordingly.
+     *
+     * @param jsonResponse The JSON response containing game state information.
+     */
     @Override
     public void displayInterface(String jsonResponse) {
         try {
@@ -64,6 +77,12 @@ public class GUIDisplay implements Display {
         }
     }
 
+    /**
+     * Retrieves the current command as a JSON string.
+     * Waits for a command to be set if none is available.
+     *
+     * @return The current command as a JSON string.
+     */
     @Override
     public String getCommands() {
         while (currentCommand == null) {
@@ -78,11 +97,19 @@ public class GUIDisplay implements Display {
         }
     }
 
+    /**
+     * Quits the GUI and prints a quitting message.
+     */
     @Override
     public void quit() {
         System.out.println("GUI is quitting...");
     }
 
+    /**
+     * Sets the current command to be executed.
+     *
+     * @param command The command to be set.
+     */
     public static void setCurrentCommand(Command command) {
         currentCommand = command;
     }

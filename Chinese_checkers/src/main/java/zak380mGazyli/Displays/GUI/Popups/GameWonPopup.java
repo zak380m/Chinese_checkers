@@ -9,16 +9,29 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
-import zak380mGazyli.Displays.GUI.GUIDisplay;
+import zak380mGazyli.Displays.GUIDisplay;
 import zak380mGazyli.Messages.Command;
 
+/**
+ * The GameWonPopup class represents a popup window that is displayed when the game is won.
+ * It shows the player's finishing position and provides options to spectate or leave the game.
+ */
 public class GameWonPopup {
     private final int position;
 
+    /**
+     * Constructs a new GameWonPopup.
+     *
+     * @param position The finishing position of the player.
+     */
     public GameWonPopup(int position) {
         this.position = position;
     }
 
+    /**
+     * Displays the popup window with the game won message.
+     * Provides buttons for the player to choose to spectate or leave the game.
+     */
     public void show() {
         Stage popupStage = new Stage();
         popupStage.setTitle("Chinese Checkers - Game Finished!");

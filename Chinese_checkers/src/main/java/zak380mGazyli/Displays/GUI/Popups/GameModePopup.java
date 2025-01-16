@@ -13,22 +13,36 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import zak380mGazyli.Displays.GUI.GUIApp;
-import zak380mGazyli.Displays.GUI.GUIDisplay;
+import zak380mGazyli.Displays.GUIDisplay;
 import zak380mGazyli.Messages.Command;
 import zak380mGazyli.Misc.SetUp;
 
 import java.util.List;
 
+/**
+ * The GameModePopup class represents a popup window for setting up the game mode.
+ * It allows the user to create or join a game room by selecting a game mode and entering room details.
+ */
 public class GameModePopup {
     private final List<String> gamemodes;
     private final List<String> boards;
     private Boolean create;
 
+    /**
+     * Constructs a new GameModePopup.
+     *
+     * @param gamemodes The list of available game modes.
+     * @param boards The list of available boards.
+     */
     public GameModePopup(List<String> gamemodes, List<String> boards) {
         this.gamemodes = gamemodes;
         this.boards = boards;
     }
 
+    /**
+     * Displays the popup window for game mode setup.
+     * Allows the user to choose between creating a new room or joining an existing one.
+     */
     public void show() {
         Stage popupStage = new Stage();
         popupStage.setTitle("Chinese Checkers - Gamemode setup");
@@ -90,7 +104,7 @@ public class GameModePopup {
         Label chooseLabel = new Label("Do you want to create a new room\nor join an existing one?");
         chooseLabel.setTextAlignment(TextAlignment.CENTER);
 
-        VBox chooseBox = new VBox(10,chooseLabel , createButton, joinButton);
+        VBox chooseBox = new VBox(10, chooseLabel, createButton, joinButton);
         chooseBox.setPadding(new Insets(10));
         chooseBox.setAlignment(Pos.CENTER);
 
@@ -99,6 +113,15 @@ public class GameModePopup {
         popupStage.show();
     }
 
+    /**
+     * Handles the action when the start button is pressed.
+     * Validates the input and sets up the game configuration.
+     *
+     * @param popupStage The stage of the popup window.
+     * @param roomName The text field for the room name.
+     * @param gamemodeChooser The combo box for selecting the game mode.
+     * @param playerNumber The text field for the number of players.
+     */
     private void handleStartButtonAction(Stage popupStage, TextField roomName, ComboBox<String> gamemodeChooser, TextField playerNumber) {
         try {
             int numberOfPlayers = Integer.parseInt(playerNumber.getText());
@@ -120,10 +143,20 @@ public class GameModePopup {
         }
     }
 
+    /**
+     * Sets the create flag indicating whether to create a new room.
+     *
+     * @param create The create flag.
+     */
     private void setCreate(Boolean create) {
         this.create = create;
     }
 
+    /**
+     * Gets the create flag indicating whether to create a new room.
+     *
+     * @return The create flag.
+     */
     public Boolean getCreate() {
         return create;
     }

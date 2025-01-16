@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import zak380mGazyli.Displays.Display;
 import zak380mGazyli.Displays.GUI.GUIApp;
-import zak380mGazyli.Displays.GUI.GUIDisplay;
+import zak380mGazyli.Displays.GUIDisplay;
 
 public class GUITest {
     Display display;

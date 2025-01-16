@@ -4,8 +4,10 @@ import java.io.*;
 import java.net.*;
 
 import zak380mGazyli.Displays.*;
-import zak380mGazyli.Displays.GUI.GUIDisplay;
 
+/**
+ * The Client class represents a client that connects to a server, sends commands, and displays the game interface.
+ */
 public class Client {
     private Socket socket;
     private ObjectOutputStream out;
@@ -13,10 +15,21 @@ public class Client {
     private final Display display = new GUIDisplay();
     private boolean isConnected = true;
 
+    /**
+     * The main method to start the client.
+     *
+     * @param args Command line arguments.
+     * @throws IOException If an I/O error occurs.
+     */
     public static void main(String[] args) throws IOException {
         new Client().startClient();
     }
 
+    /**
+     * Starts the client, connects to the server, and handles communication.
+     *
+     * @throws IOException If an I/O error occurs.
+     */
     public void startClient() throws IOException {
         try {
             socket = new Socket("localhost", 5555);
@@ -35,7 +48,7 @@ public class Client {
                     System.out.println("Connection to server lost.");
                     quit();
                 } catch (IOException | ClassNotFoundException e) {
-                    if (isConnected) { 
+                    if (isConnected) {
                         System.out.println("Connection to server lost due to error: " + e.getMessage());
                         quit();
                     }
@@ -44,10 +57,13 @@ public class Client {
 
             sendCommands();
         } catch (IOException e) {
-            System.out.println("Failed to connect to the server..." );
+            System.out.println("Failed to connect to the server...");
         }
     }
 
+    /**
+     * Continuously sends commands to the server.
+     */
     private void sendCommands() {
         while (true) {
             try {
@@ -58,6 +74,9 @@ public class Client {
         }
     }
 
+    /**
+     * Quits the client, closes the connection, and exits the application.
+     */
     private void quit() {
         isConnected = false;
         System.out.println("Client is quitting...");
@@ -74,4 +93,3 @@ public class Client {
         System.exit(0);
     }
 }
-

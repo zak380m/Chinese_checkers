@@ -4,12 +4,26 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.StrokeType;
 
+/**
+ * The BoardCircle class represents a circle on the game board.
+ * It extends Circle and includes additional properties for row, column, and selection state.
+ */
 public class BoardCircle extends Circle {
     private final int row;
     private final int col;
     private boolean selected = false;
     private int position;
 
+    /**
+     * Constructs a new BoardCircle.
+     * Initializes the circle with the specified radius, color, row, and column.
+     * Sets up the mouse click event handler to toggle selection.
+     *
+     * @param radius The radius of the circle.
+     * @param color The color of the circle.
+     * @param row The row position of the circle on the board.
+     * @param col The column position of the circle on the board.
+     */
     public BoardCircle(double radius, Color color, int row, int col) {
         super(radius);
         if (color == Color.WHITE) {
@@ -25,10 +39,14 @@ public class BoardCircle extends Circle {
         setOnMouseClicked(e -> {
             System.out.println("Clicked on cell (" + row + ", " + col + ")");
             toggleSelection();
-
         });
     }
 
+    /**
+     * Toggles the selection state of the circle.
+     * Updates the stroke width and color based on the selection state.
+     * Manages the selection state in the BoardPane.
+     */
     public void toggleSelection() {
         if (!selected && BoardPane.getSelectedCells() < 2) {
             selected = true;
@@ -53,15 +71,23 @@ public class BoardCircle extends Circle {
                 setStrokeWidth(0);
             }
             BoardPane.unselectedCell(position);
-
-
         }
     }
 
+    /**
+     * Gets the row position of the circle on the board.
+     *
+     * @return The row position of the circle.
+     */
     public int getRow() {
         return row;
     }
 
+    /**
+     * Gets the column position of the circle on the board.
+     *
+     * @return The column position of the circle.
+     */
     public int getCol() {
         return col;
     }

@@ -4,12 +4,16 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
-import zak380mGazyli.Displays.GUI.GUIDisplay;
+import zak380mGazyli.Displays.GUIDisplay;
 import zak380mGazyli.Displays.GUI.Misc.ColorWrapper;
 import zak380mGazyli.Messages.Command;
 import zak380mGazyli.Misc.Cell;
 import java.util.Objects;
 
+/**
+ * The BoardPane class represents the game board in the GUI.
+ * It extends Pane and contains a GridPane to display the board cells.
+ */
 public class BoardPane extends Pane {
     private static final int height = 500;
     private static final int width = 500;
@@ -17,6 +21,10 @@ public class BoardPane extends Pane {
 
     private static final GridPane gridPane = new GridPane();
 
+    /**
+     * Constructs a new BoardPane.
+     * Initializes the preferred size and adds the GridPane to the Pane.
+     */
     public BoardPane() {
         setPrefSize(width, height);
         gridPane.setPrefSize(width, height);
@@ -25,6 +33,12 @@ public class BoardPane extends Pane {
         getChildren().add(gridPane);
     }
 
+    /**
+     * Displays the game board.
+     * Clears the selected cells and the GridPane, then adds the cells from the board array.
+     *
+     * @param board The 2D array representing the game board.
+     */
     public static void displayBoard(Cell[][] board) {
         clearSelectedCells();
         gridPane.getChildren().clear();
@@ -42,14 +56,30 @@ public class BoardPane extends Pane {
         }
     }
 
+    /**
+     * Selects a cell on the board.
+     *
+     * @param cell The BoardCircle representing the selected cell.
+     * @param index The index in the selectedCells array to store the selected cell.
+     */
     public static void selectedCell(BoardCircle cell, int index) {
         selectedCells[index] = cell;
     }
 
+    /**
+     * Unselects a cell on the board.
+     *
+     * @param index The index in the selectedCells array to clear.
+     */
     public static void unselectedCell(int index) {
         selectedCells[index] = null;
     }
 
+    /**
+     * Gets the number of selected cells.
+     *
+     * @return The number of selected cells.
+     */
     public static int getSelectedCells() {
         int count = 0;
         for (BoardCircle cell : selectedCells) {
@@ -60,6 +90,10 @@ public class BoardPane extends Pane {
         return count;
     }
 
+    /**
+     * Confirms the move if two cells are selected.
+     * Sends a move command to the GUIDisplay and clears the selected cells.
+     */
     public static void confirmMove() {
         if (getSelectedCells() == 2) {
             GUIDisplay.setCurrentCommand(new Command("move", new int[] { selectedCells[0].getCol(), selectedCells[0].getRow(), selectedCells[1].getCol(), selectedCells[1].getRow() }));
@@ -68,6 +102,10 @@ public class BoardPane extends Pane {
         }
     }
 
+    /**
+     * Clears the selected cells.
+     * Toggles the selection state of each selected cell.
+     */
     private static void clearSelectedCells() {
         for (int i = 1; i >= 0; i--) {
             if (selectedCells[i] != null) {
