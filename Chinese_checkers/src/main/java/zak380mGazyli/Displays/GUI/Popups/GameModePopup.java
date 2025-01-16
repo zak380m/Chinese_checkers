@@ -47,6 +47,8 @@ public class GameModePopup {
 
         TextField playerNumber = new TextField();
         playerNumber.setPromptText("Number of Players");
+        playerNumber.setMaxWidth(25);
+        playerNumber.setAlignment(Pos.CENTER);
         playerNumber.setText("2");
 
         roomName.setOnKeyPressed(e -> {

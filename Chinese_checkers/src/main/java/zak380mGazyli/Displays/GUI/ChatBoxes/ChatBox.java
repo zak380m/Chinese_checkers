@@ -48,7 +48,7 @@ public class ChatBox extends VBox {
         String message = inputField.getText();
         if (!message.isEmpty()) {
             GUIDisplay.setCurrentCommand(new Command("message", new int[] { -1 }, message));
-            displayMessage(message);
+            displayMessage("You: " + message);
             inputField.clear();
         }
     }
@@ -60,7 +60,7 @@ public class ChatBox extends VBox {
     }
 
     public void displayMessage(String message) {
-        Text messageText = new Text("Message: " + message + "\n");
+        Text messageText = new Text(message + "\n");
         messageText.setStyle("-fx-fill: black;");
         chatLog.getChildren().add(messageText);
     }
