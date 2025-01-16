@@ -31,7 +31,7 @@ public class SuperGamemodeTest {
             Board board = bb.getBoard();
             board.displayBoard();
             gamemode.setNumberOfPlayers(player_count, board);
-            System.out.println(gamemode.validateMove(0, 12, 4, 8, board));
+            System.out.println(gamemode.validateMove(12, 0, 8, 4, board));
         }
     }
 }

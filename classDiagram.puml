@@ -3,73 +3,105 @@
 package zak380mGazyli.Boards {
     interface Board {
         Cell[][] getBoard()
+        int[][] getStartArea(int area_num)
+        int[][] getNeighbours()
         void updateBoard(int startX, int startY, int endX, int endY)
         void displayBoard()
     }
-
-    class ClassicBoard {
-        - final int x_size = 17
-        - final int y_size = 25
-        - final String symbol = "."
-        - final Cell[][] cells
-        + ClassicBoard()
-        + Cell[][] getBoard()
-        + void updateBoard(int startX, int startY, int endX, int endY)
-        + void displayBoard()
-        + void colorTriangle(int triangle_num, String color)
-        + void colorTriangle2P(int triangle_num, String color)
-    }
-
-    Board <|.. ClassicBoard
 }
 
-package zak380mGazyli.Builders.BoardBuilders {
-    interface BoardBuilder {
-        void buildBoard(int players)
-        Board getBoard()
+package zak380mGazyli.Gamemodes {
+    interface Gamemode {
+        boolean setNumberOfPlayers(int numberOfPlayers, Board board)
+        boolean validateMove(int startX, int startY, int endX, int endY, Board board)
+        void processMove(int startX, int startY, int endX, int endY, Board board)
+        void processPass()
+        boolean isPass()
+        Map<Integer, Integer> playerPlace()
+        int getTurn()
+        String getName()
+        int getTurnCount()
+        String getPlayerColor(int playerNumber)
     }
-
-    class ClassicBoardBuilder {
-        - ClassicBoard board
-        + void buildBoard(int players)
-        + Board getBoard()
-    }
-
-    BoardBuilder <|.. ClassicBoardBuilder
 }
 
-package zak380mGazyli.Builders.GamemodeBuilders {
-    interface GamemodeBuilder {
-        void buildGamemode(int numberOfPlayers)
-        Gamemode getGamemode()
-    }
-
-    class DummyGamemodeBuilder {
+package zak380mGazyli.PlayersHandling {
+    class GameRoom {
+        - Server server
+        - String password
+        - int roomId
+        - int numberOfPlayers
+        - int numberOfBots
+        - Map<Integer, PlayerHandler> players
+        - Map<Integer, Bot> bots
+        - Board board
         - Gamemode gamemode
-        + void buildGamemode(int numberOfPlayers)
+        - int realNumberOfPlayers
+        + GameRoom(Gamemode gamemode, Board board, String password, int numberOfPlayers, int numberOfBots, int roomId, Server server)
+        + String getGamemodeName()
+        + String getPassword()
+        + int getRoomId()
+        + boolean areThereMissingPlayers()
+        + synchronized boolean addPlayer(PlayerHandler playerHandler)
+        + synchronized void processMove(int startX, int startY, int endX, int endY)
+        + synchronized void processPass()
+        + synchronized void broadcastToAllExceptOne(String jsonToBroadcast, int playerNumber)
+        + synchronized void sendToAPlayer(String jsonToSend, int playerNumber)
+        + synchronized void broadcastCurrentGameState()
+        + String currentGameState(int playerNumber)
+        + synchronized void removePlayer(int index)
         + Gamemode getGamemode()
+        + int getNumberOfPlayers()
+        + boolean isGameFinished()
     }
 
-    GamemodeBuilder <|.. DummyGamemodeBuilder
+    class PlayerHandler {
+        - Server server
+        - Socket socket
+        - GameRoom room
+        - ObjectOutputStream out
+        - ObjectInputStream in
+        - Gamemode gamemode
+        - int playerNumber
+        - Boolean isConnected
+        - Gson gson
+        - Map<String, CommandHandler> commandHandlers
+        - volatile boolean isReady
+        - GameBuilder gameBuilder
+        + PlayerHandler(Socket socket, Server server)
+        + void run()
+        + void sendErrorMessage(String message)
+        + void sendJsonReply(String jsonReply)
+        + void handleDisconnection()
+        + int getPlayerNumber()
+        + void setPlayerInRoom(int playerNumber, GameRoom room, Gamemode gamemode)
+        + void sendSetUp(SetUp setUp)
+        + SetUp getSetUp()
+        + boolean createGameRoom(String gamemodeName, int playerCount, int botCount, String password)
+    }
 }
 
-package zak380mGazyli.Builders {
-    class GameComponents {
-        - final GamemodeBuilder gamemodeBuilder
-        - final BoardBuilder boardBuilder
-        + GameComponents(GamemodeBuilder gamemodeBuilder, BoardBuilder boardBuilder)
-        + GamemodeBuilder getGamemodeBuilder()
-        + BoardBuilder getBoardBuilder()
+package zak380mGazyli {
+    class Client {
+        - Socket socket
+        - ObjectOutputStream out
+        - ObjectInputStream in
+        - final Display display
+        - boolean isConnected
+        + static void main(String[] args)
+        + void startClient()
+        - void sendCommands()
+        - void quit()
     }
 
-    class GameBuilder {
-        - final Map<String, GameComponents> gameList
-        - final String gameName
-        + GameBuilder(String gameName)
-        + void addGame(String name, GamemodeBuilder gamemodeBuilder, BoardBuilder boardBuilder)
-        + GamemodeBuilder getGamemodeBuilder()
-        + BoardBuilder getBoardBuilder()
-        - void populateGamelist()
+    class Server {
+        - Map<Integer, GameRoom> gameRooms
+        - int roomCounter
+        + static void main(String[] args)
+        + void startServer()
+        + synchronized GameRoom createGameRoom(Gamemode gamemode, Board board, String password, int numberOfPlayers, int numberOfBots)
+        + synchronized GameRoom joinGameRoom(String gameName, String password)
+        + synchronized void deleteGameRoom(GameRoom room)
     }
 }
 
@@ -79,170 +111,31 @@ package zak380mGazyli.Displays {
         String getCommands()
         void quit()
     }
-
-    class CLIDisplay {
-        - Scanner scanner
-        - Gson gson
-        - Map<String, CommandHandler> commandHandlers
-        - Map<String, String> commandDescriptions
-        + CLIDisplay()
-        + void displayInterface(String jsonResponse)
-        + String getCommands()
-        + void quit()
-        - void initializeCommands()
-        - String handleMoveCommand()
-        - String handleDisplayCommand()
-        - String handleQuitCommand()
-        - String handleSetUpGamemodeCommand()
-        - String handleHelpCommand()
-        - String handleMessageCommand()
-        - void displayBoard(Cell[][] board)
-        - void clearTerminal()
-    }
-
-    Display <|.. CLIDisplay
 }
 
-package zak380mGazyli.Gamemodes {
-    interface Gamemode {
-        boolean setNumberOfPlayers(int numberOfPlayers)
-        boolean validateMove(int startX, int startY, int endX, int endY, Board board)
-        void processMove(int startX, int startY, int endX, int endY, Board board)
-        int getTurn()
-    }
-
-    class DummyGamemode {
-        - int turn
-        - int numberOfPlayers
-        + boolean setNumberOfPlayers(int numberOfPlayers)
-        + boolean validateMove(int startX, int startY, int endX, int endY, Board board)
-        + void processMove(int startX, int startY, int endX, int endY, Board board)
-        + int getTurn()
-    }
-
-    Gamemode <|.. DummyGamemode
-}
-
-package zak380mGazyli.Messages {
-    class Message {
-        - String message
-        + Message(String message)
-        + String getMessage()
-    }
-
-    class Command {
-        - String name
-        - int[] args
-        - String textArg
-        + Command(String name)
-        + Command(String name, int[] args)
-        + Command(String name, int[] args, String textArg)
-        + Command(String name, String textArg)
-        + String getName()
-        + int[] getArgs()
-        + String getTextArg()
-    }
-
-    class ErrorMessage {
-        - String error
-        + ErrorMessage(String error)
-        + String getError()
+package zak380mGazyli.Builders {
+    class GameBuilder {
+        - static final Map<String, GameComponents> gameList
+        - String gameName
+        - static final List<String> gameNameList
+        + GameBuilder()
+        + void setGameName(String gameName)
+        + void addGame(String name, GamemodeBuilder gamemodeBuilder, BoardBuilder boardBuilder)
+        + GamemodeBuilder getGamemodeBuilder()
+        + BoardBuilder getBoardBuilder()
+        + static String[] getGameNames()
+        + List<String> getGameList()
+        + List<String> getBoardList()
+        - void populateGamelist()
     }
 }
 
-package zak380mGazyli.Misc {
-    class Cell {
-        - String cellSymbol
-        - String cellColor
-        + Cell(String cellSymbol, String cellColor)
-        + void setSymbol(String cellSymbol)
-        + String getSymbol()
-        + void setColor(String cellColor)
-        + String getColor()
-    }
-
-    class Color {
-        + static final String WHITE
-        + static final String RED
-        + static final String GREEN
-        + static final String YELLOW
-        + static final String BLUE
-        + static final String MAGENTA
-        + static final String CYAN
-        + static final String GREY
-        + static String getEscapeSequence(String colorName)
-    }
-}
-
-package zak380mGazyli {
-    class GameState {
-        - int whoMoved
-        - Cell[][] boardState
-        - int turnsBeforePlayer
-        + GameState(Cell[][] boardState, int turnsBeforePlayer, int whoMoved)
-        + int getWhoMoved()
-        + Cell[][] getBoardState()
-        + int getTurnsBeforePlayer()
-    }
-
-    class Client {
-        - Socket socket
-        - ObjectOutputStream out
-        - ObjectInputStream in
-        - Display display
-        - boolean isConnected
-        + static void main(String[] args)
-        + void startClient()
-        - void sendCommands()
-        - void quit()
-    }
-
-    class Server {
-        - List<PlayerHandler> players
-        - Gamemode gamemode
-        - Board board
-        - int numberOfPlayers
-        - volatile boolean settingUp
-        + static void main(String[] args)
-        + void startServer()
-        + synchronized void processMove(int startX, int startY, int endX, int endY)
-        + synchronized void broadcastToAllExceptOne(String jsonToBroadcast, int playerNumber)
-        + synchronized void sendToAPlayer(String jsonToSend, int playerNumber)
-        + synchronized void broadcastCurrentGameState()
-        + String currentGameState(int playerNumber)
-        + synchronized void removePlayer(PlayerHandler player)
-        + Gamemode getGamemode()
-        + int getNumberOfPlayers()
-        + boolean setUpGamemode(String gamemodeName, int playerCount)
-    }
-
-    class PlayerHandler {
-        - Socket socket
-        - Server server
-        - ObjectOutputStream out
-        - ObjectInputStream in
-        - Gamemode gamemode
-        - int playerNumber
-        - Boolean isConnected
-        - Gson gson
-        + PlayerHandler(Socket socket, Server server, int playerNumber)
-        + void run()
-        + void sendErrorMessage(String message)
-        + void sendJsonReply(String jsonReply)
-        + void handleDisconnection()
-        + int getPlayerNumber()
-        + void setUpGamemode()
-    }
-}
-
-zak380mGazyli.Server *-- zak380mGazyli.PlayerHandler
-zak380mGazyli.PlayerHandler ..|> Runnable
+zak380mGazyli.Server *-- zak380mGazyli.PlayersHandling.GameRoom
+zak380mGazyli.PlayersHandling.GameRoom *-- zak380mGazyli.PlayersHandling.PlayerHandler
+zak380mGazyli.PlayersHandling.PlayerHandler ..|> Runnable
 zak380mGazyli.Client *-- zak380mGazyli.Displays.Display
 zak380mGazyli.Server *-- zak380mGazyli.Gamemodes.Gamemode
 zak380mGazyli.Server *-- zak380mGazyli.Boards.Board
 zak380mGazyli.Server *-- zak380mGazyli.Builders.GameBuilder
-zak380mGazyli.Builders.GameBuilder *-- zak380mGazyli.Builders.GameComponents
-zak380mGazyli.Builders.GameComponents *-- zak380mGazyli.Builders.GamemodeBuilders.GamemodeBuilder
-zak380mGazyli.Builders.GameComponents *-- zak380mGazyli.Builders.BoardBuilders.BoardBuilder
 
 @enduml

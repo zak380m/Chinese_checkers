@@ -15,6 +15,8 @@ rectangle "Game System" {
     usecase "Process Move" as UC9
     usecase "Validate Move" as UC10
     usecase "Update Board" as UC11
+    usecase "Join Game Room" as UC12
+    usecase "Create Game Room" as UC13
 }
 
 Client --> UC1
@@ -23,11 +25,13 @@ Client --> UC3
 Client --> UC4
 Client --> UC5
 Client --> UC6
-Client --> UC7
+Client --> UC12
 
+Server --> UC7
 Server --> UC8
 Server --> UC9
 Server --> UC10
 Server --> UC11
+Server --> UC13
 
 @enduml
