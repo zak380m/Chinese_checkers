@@ -1,11 +1,13 @@
 package zak380mGazyli.Bots;
 
+import zak380mGazyli.Gamemodes.Gamemode;
+
 /**
  * The Bot interface represents a bot in the game that can be run as a separate thread.
  */
 public interface Bot extends Runnable {
     /**
-     * The run method is the entry point for the bot's execution when it is run as a thread.
+     * The setGamemode method sets the gamemode of the bot.
      */
-    public void run();
+    public void setGame(Gamemode gamemode, int playerID);
 }
