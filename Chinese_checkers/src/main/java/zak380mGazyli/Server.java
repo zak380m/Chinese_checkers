@@ -100,13 +100,12 @@ public class Server{
     /**
      * Joins an existing game room with the specified game name and password.
      *
-     * @param gameName The name of the game to join.
      * @param password The password for the game room.
      * @return The joined GameRoom instance, or null if no matching room is found.
      */
-    public synchronized GameRoom joinGameRoom(String gameName, String password) {
+    public synchronized GameRoom joinGameRoom(String password) {
         for (int i = 1; i <= roomCounter; i++) {
-            if (gameRooms.get(i).getGamemodeName().equals(gameName) && gameRooms.get(i).getPassword().equals(password) && gameRooms.get(i).areThereMissingPlayers()) {
+            if (gameRooms.get(i).getPassword().equals(password) && gameRooms.get(i).areThereMissingPlayers()) {
                 return gameRooms.get(i);
             }
         }

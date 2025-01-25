@@ -222,7 +222,7 @@ public class PlayerHandler implements Runnable {
                 if (info.isCreate()) {
                     if(createGameRoom(info.getGamemode(), info.getPlayerCount(), info.getBotCount(), info.getPassword())) isReady = true;
                 } else if (!info.isCreate()) {
-                    GameRoom gameRoom = server.joinGameRoom(info.getGamemode(), info.getPassword());
+                    GameRoom gameRoom = server.joinGameRoom(info.getPassword());
                     if(gameRoom != null) isReady = gameRoom.addPlayer(this);
                 }
             } catch (Exception e) {

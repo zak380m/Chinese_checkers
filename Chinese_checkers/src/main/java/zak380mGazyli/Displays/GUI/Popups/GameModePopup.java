@@ -8,8 +8,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import zak380mGazyli.Displays.GUI.GUIApp;
@@ -18,6 +17,8 @@ import zak380mGazyli.Messages.Command;
 import zak380mGazyli.Misc.SetUp;
 
 import java.util.List;
+
+import static javafx.collections.FXCollections.observableArrayList;
 
 /**
  * The GameModePopup class represents a popup window for setting up the game mode.
@@ -45,53 +46,83 @@ public class GameModePopup {
      */
     public void show() {
         Stage popupStage = new Stage();
-        popupStage.setTitle("Chinese Checkers - Gamemode setup");
+        popupStage.setTitle("Chinese Checkers - Game setup");
         popupStage.setOnCloseRequest(e -> GUIDisplay.setCurrentCommand(new Command("quit")));
         popupStage.toFront();
-
-        ComboBox<String> gamemodeChooser = new ComboBox<>();
-        for (String gamemode : gamemodes) {
-            gamemodeChooser.getItems().add(gamemode);
-        }
-        gamemodeChooser.setPromptText("Gamemode:");
-        gamemodeChooser.getSelectionModel().select(1);
+        popupStage.setResizable(false);
 
         TextField roomName = new TextField();
         roomName.setPromptText("Room Name");
+        roomName.setPrefWidth(100);
+
+        ComboBox<String> gamemodeChooser = new ComboBox<>(observableArrayList(gamemodes));
+
+        gamemodeChooser.setPromptText("Gamemode");
+        gamemodeChooser.getSelectionModel().select(1);
+        gamemodeChooser.setPrefWidth(100);
+
+        ComboBox<String> boardChooser = new ComboBox<>(observableArrayList("placeholder"));
+
+        boardChooser.setPromptText("Board");
+        boardChooser.getSelectionModel().select(0);
+        boardChooser.setPrefWidth(100);
 
         TextField playerNumber = new TextField();
         playerNumber.setPromptText("Number of Players");
-        playerNumber.setMaxWidth(25);
-        playerNumber.setAlignment(Pos.CENTER);
+//        playerNumber.setMaxWidth(25);
+//        playerNumber.setAlignment(Pos.CENTER);
         playerNumber.setText("2");
+        playerNumber.setPrefWidth(100);
+
+        TextField botNumber = new TextField();
+        botNumber.setPromptText("Number of Bots");
+//        botNumber.setMaxWidth(25);
+//        botNumber.setAlignment(Pos.CENTER);
+        botNumber.setText("0");
+        botNumber.setPrefWidth(100);
 
         roomName.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
-                handleStartButtonAction(popupStage, roomName, gamemodeChooser, playerNumber);
+                handleStartButtonAction(popupStage, roomName, gamemodeChooser, boardChooser, playerNumber, botNumber);
             }
         });
 
         playerNumber.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
-                handleStartButtonAction(popupStage, roomName, gamemodeChooser, playerNumber);
+                handleStartButtonAction(popupStage, roomName, gamemodeChooser, boardChooser, playerNumber,  botNumber);
             }
         });
 
+        GridPane gridConfig = new GridPane();
+
+        gridConfig.setHgap(10);
+        gridConfig.setVgap(10);
+
+        gridConfig.add(new Label("Room Name:"), 0, 0);
+        gridConfig.add(roomName, 1, 0);
+
         Button startButton = new Button("Start");
-        startButton.setOnAction(e -> handleStartButtonAction(popupStage, roomName, gamemodeChooser, playerNumber));
+        startButton.setOnAction(e -> handleStartButtonAction(popupStage, roomName, gamemodeChooser, boardChooser, playerNumber, botNumber));
+        startButton.setMaxWidth(Double.MAX_VALUE);
 
-        HBox hboxConfig = new HBox(10, roomName, gamemodeChooser);
-
-        VBox vboxConfig = new VBox(10, hboxConfig, startButton);
+        VBox vboxConfig = new VBox(10, gridConfig, startButton);
         vboxConfig.setPadding(new Insets(10));
         vboxConfig.setAlignment(Pos.CENTER);
+
 
         Scene configScene = new Scene(vboxConfig);
 
         Button createButton = new Button("Create Room");
         createButton.setOnAction(e -> {
             setCreate(true);
-            hboxConfig.getChildren().add(playerNumber);
+            gridConfig.add(new Label("Gamemode:"), 0, 1);
+            gridConfig.add(gamemodeChooser, 1, 1);
+            gridConfig.add(new Label("Board:"), 0, 2);
+            gridConfig.add(boardChooser, 1, 2);
+            gridConfig.add(new Label("# of players:"), 0, 3);
+            gridConfig.add(playerNumber, 1, 3);
+            gridConfig.add(new Label("# of bots:"), 0, 4);
+            gridConfig.add(botNumber, 1, 4);
             popupStage.setScene(configScene);
         });
 
@@ -122,7 +153,7 @@ public class GameModePopup {
      * @param gamemodeChooser The combo box for selecting the game mode.
      * @param playerNumber The text field for the number of players.
      */
-    private void handleStartButtonAction(Stage popupStage, TextField roomName, ComboBox<String> gamemodeChooser, TextField playerNumber) {
+    private void handleStartButtonAction(Stage popupStage, TextField roomName, ComboBox<String> gamemodeChooser, ComboBox  boardChooser, TextField playerNumber, TextField botNumber) {
         try {
             int numberOfPlayers = Integer.parseInt(playerNumber.getText());
             if (numberOfPlayers <= 0) {
@@ -131,9 +162,11 @@ public class GameModePopup {
             SetUp setUp = new SetUp();
             setUp.setCreate(getCreate());
             setUp.setPassword(roomName.getText());
-            setUp.setGamemode(gamemodeChooser.getValue());
             if (getCreate()) {
+                setUp.setGamemode(gamemodeChooser.getValue());
+                setUp.setBoard((String) boardChooser.getValue()); //temporary cast
                 setUp.setPlayerCount(numberOfPlayers);
+                setUp.setBotCount(Integer.parseInt(botNumber.getText()));
             }
             GUIDisplay.setCurrentCommand(setUp);
             popupStage.close();
