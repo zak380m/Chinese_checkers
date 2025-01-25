@@ -26,7 +26,7 @@ public class PlayerHandler implements Runnable {
     private ObjectInputStream in;
     private Gamemode gamemode;
     private int playerNumber;
-    private Boolean isConnected;
+    private volatile Boolean isConnected;
     private Gson gson;
     private Map<String, CommandHandler> commandHandlers;
     private volatile boolean isReady;
@@ -167,7 +167,7 @@ public class PlayerHandler implements Runnable {
     }
 
     public void handleDisconnection() {
-        room.removePlayer(playerNumber);
+        if(room != null) room.removePlayer(playerNumber);
         isConnected = false;
         try {
             socket.close();
@@ -221,6 +221,9 @@ public class PlayerHandler implements Runnable {
                 SetUp info = getSetUp();
                 if (info.isCreate()) {
                     if(createGameRoom(info.getGamemode(), info.getBoard(), info.getPlayerCount(), info.getBotCount(), info.getPassword())) isReady = true;
+                } else if(info.isLoad()) {
+                    GameRoom gameRoom = server.loadGameRoom(info.getGameId(), info.getPassword());
+                    if(gameRoom != null) isReady = gameRoom.addPlayer(this);
                 } else if (!info.isCreate()) {
                     GameRoom gameRoom = server.joinGameRoom(info.getPassword());
                     if(gameRoom != null) isReady = gameRoom.addPlayer(this);
@@ -252,7 +255,7 @@ public class PlayerHandler implements Runnable {
         }
         Gamemode gamemode = gamemodeBuilder.getGamemode();
         System.out.println("Gamemode set up is done.");
-        GameRoom gameRoom = server.createGameRoom(gamemode, board, password, playerCount, botCount, null);
+        GameRoom gameRoom = server.createGameRoom(gamemode, board, password, playerCount, botCount);
         if(gameRoom != null) {
             System.out.println("Game room created.");
             if(gameRoom.addPlayer(this)) return true;

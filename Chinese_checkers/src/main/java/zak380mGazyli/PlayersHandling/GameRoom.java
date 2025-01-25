@@ -69,6 +69,10 @@ public class GameRoom {
         return roomId;
     }
 
+    public Board getBoard() {
+        return board;
+    }
+
     public boolean areThereMissingPlayers() {
         boolean areThereMissingPlayers = false;
         for (int i = 0; i < numberOfPlayers; i++) {

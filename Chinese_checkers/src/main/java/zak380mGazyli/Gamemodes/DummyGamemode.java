@@ -130,6 +130,11 @@ public class DummyGamemode implements Gamemode {
         return turn;
     }
 
+    @Override
+    public void setTurnCount(int turnCount) {
+        this.turn = turnCount;
+    }
+
     /**
      * Gets the color of the specified player.
      *
