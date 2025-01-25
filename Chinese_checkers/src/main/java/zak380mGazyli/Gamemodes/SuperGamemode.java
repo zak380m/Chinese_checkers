@@ -349,6 +349,11 @@ public class SuperGamemode implements Gamemode {
         return turnCount;
     }
 
+    @Override
+    public void setTurnCount(int turnCount) {
+        this.turnCount = turnCount;
+    }
+
     /**
      * Gets the color of the specified player.
      *

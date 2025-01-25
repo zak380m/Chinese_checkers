@@ -8,7 +8,9 @@ import java.util.List;
  * The SetUp class represents the setup configuration for a game.
  */
 public class SetUp extends Command {
+    private boolean load;
     private boolean create;
+    private int gameId;
     private String gamemode;
     private String board;
     private int playerCount;
@@ -24,6 +26,8 @@ public class SetUp extends Command {
      * @param boards The list of available boards.
      */
     public SetUp(List<String> gamemodes, List<String> boards) {
+        this.gameId = 0;
+        this.load = false;
         this.create = false;
         this.gamemode = null;
         this.board = null;
@@ -38,6 +42,8 @@ public class SetUp extends Command {
      * Constructs a default SetUp instance.
      */
     public SetUp() {
+        this.gameId = 0;
+        this.load = false;
         this.create = false;
         this.gamemode = null;
         this.board = null;
@@ -53,6 +59,14 @@ public class SetUp extends Command {
      */
     public void setCreate(boolean create) {
         this.create = create;
+    }
+
+    public void setLoad(boolean load) {
+        this.load = load;
+    }
+
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
     }
 
     /**
@@ -107,6 +121,14 @@ public class SetUp extends Command {
      */
     public boolean isCreate() {
         return create;
+    }
+
+    public boolean isLoad() {
+        return load;
+    }
+
+    public int getGameId() {
+        return gameId;
     }
 
     /**

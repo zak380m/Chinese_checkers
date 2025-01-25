@@ -47,6 +47,7 @@ public class Server{
     public void startServer() throws IOException {
         ServerSocket serverSocket = new ServerSocket(5555);
         System.out.println("Server started on port 5555.");
+        mediator.setServer(this);
         while (true) {
             try {
                 Socket playerSocket = serverSocket.accept();
@@ -69,9 +70,10 @@ public class Server{
      * @param numberOfBots The number of bots in the new room.
      * @return The created GameRoom instance.
      */
-    public synchronized GameRoom createGameRoom(Gamemode gamemode, Board board, String password, int numberOfPlayers, int numberOfBots, Game game) {
+    public synchronized GameRoom createGameRoom(Gamemode gamemode, Board board, String password, int numberOfPlayers, int numberOfBots) {
         GameRoom newRoom = new GameRoom(gamemode, board, password, numberOfPlayers, numberOfBots, roomCounter++, this, mediator);
-        if((newRoom != null) && (game == null) ) {
+        Game game = null;
+        if((newRoom != null)) {
             game = saveGameToDatabase(gamemode, board, numberOfBots + numberOfPlayers);
         }
         newRoom.setGame(game);
@@ -112,6 +114,14 @@ public class Server{
         return null;
     }
 
+    public synchronized GameRoom loadGameRoom(int gameID, String password) {
+        GameRoom oldRoom = mediator.loadRoom(gameID, password);
+        if(oldRoom != null) {
+            mediator.playGame(oldRoom);
+        }
+        return oldRoom;
+    }
+
     /**
      * Deletes the specified game room.
      *
@@ -129,7 +139,7 @@ public class Server{
         }
     }
 
-    public synchronized void deleteGameRoomByID(int gameID) {
+    public synchronized void deleteGameByID(int gameID) {
         mediator.deleteGame(gameID);
     }
 }

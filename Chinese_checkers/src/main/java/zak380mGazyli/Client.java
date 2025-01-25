@@ -13,7 +13,7 @@ public class Client {
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private final Display display = new GUIDisplay();
-    private boolean isConnected = true;
+    private volatile boolean isConnected = true;
 
     /**
      * The main method to start the client.
