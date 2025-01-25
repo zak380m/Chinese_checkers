@@ -5,26 +5,25 @@ import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import zak380mGazyli.Boards.Board;
+import zak380mGazyli.Database.Models.Game;
+import zak380mGazyli.Database.Service.GameService;
 import zak380mGazyli.Gamemodes.Gamemode;
 import zak380mGazyli.PlayersHandling.*;
 
 /**
  * The Server class represents a game server that manages game rooms and player connections.
  */
+@Service
 public class Server {
-    private Map<Integer, GameRoom> gameRooms = new HashMap<>();
+    private final Map<Integer, GameRoom> gameRooms = new HashMap<>();
     private int roomCounter = 0;
 
-    /**
-     * The main method to start the server.
-     *
-     * @param args Command line arguments.
-     * @throws IOException If an I/O error occurs.
-     */
-    public static void main(String[] args) throws IOException {
-        new Server().startServer();
-    }
+    @Autowired
+    private GameService gameService;
 
     /**
      * Starts the server, listens for player connections, and handles them.
@@ -58,6 +57,9 @@ public class Server {
      */
     public synchronized GameRoom createGameRoom(Gamemode gamemode, Board board, String password, int numberOfPlayers, int numberOfBots) {
         GameRoom newRoom = new GameRoom(gamemode, board, password, numberOfPlayers, numberOfBots, roomCounter++, this);
+        if(newRoom != null) {
+            saveGameToDatabase(gamemode, board, numberOfBots + numberOfPlayers);
+        }
         for(int i = 1; i <= roomCounter; i++) {
             if(gameRooms.get(i) == null) {
                 gameRooms.put(i, newRoom);
@@ -66,6 +68,19 @@ public class Server {
         }
         gameRooms.put(roomCounter, newRoom);
         return newRoom;
+    }
+
+    private void saveGameToDatabase(Gamemode gamemode, Board board, int numberOfPlayers) {
+        try {
+            Game newGame = new Game(gamemode.getName(), board.getName(), numberOfPlayers);
+            
+            // Use the gameService to save the game to the database
+            gameService.createGame(newGame);
+
+            System.out.println("Game saved to the database with ID: " + newGame.getId());
+        } catch (Exception e) {
+            System.out.println("Failed to save the game to the database: " + e.getMessage());
+        }
     }
 
     /**

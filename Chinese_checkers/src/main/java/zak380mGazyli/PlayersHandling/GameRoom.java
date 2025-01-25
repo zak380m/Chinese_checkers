@@ -11,15 +11,15 @@ import zak380mGazyli.Gamemodes.Gamemode;
 import zak380mGazyli.Misc.GameState;
 
 public class GameRoom {
-    private Server server;
+    private final Server server;
     private String password;
-    private int roomId;
-    private int numberOfPlayers;
-    private int numberOfBots;
-    private Map<Integer, PlayerHandler> players;
-    private Map<Integer, Bot> bots;
-    private Board board;
-    private Gamemode gamemode;
+    private final int roomId;
+    private final int numberOfPlayers;
+    private final int numberOfBots;
+    private final Map<Integer, PlayerHandler> players;
+    private final Map<Integer, Bot> bots;
+    private final Board board;
+    private final Gamemode gamemode;
     private int realNumberOfPlayers;
 
     public GameRoom(Gamemode gamemode, Board board, String password, int numberOfPlayers, int numberOfBots, int roomId, Server server) {

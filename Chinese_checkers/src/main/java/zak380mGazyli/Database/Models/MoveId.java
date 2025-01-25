@@ -4,44 +4,36 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class MoveId implements Serializable {
-
-    private int gameId;
+    private int game;  // This should match the game_id in the Move entity
     private int turnNumber;
 
-    // Constructors, Getters, Setters, equals, and hashCode
+    // Default constructor
     public MoveId() {}
 
-    public MoveId(int gameId, int turnNumber) {
-        this.gameId = gameId;
+    public MoveId(int game, int turnNumber) {
+        this.game = game;
         this.turnNumber = turnNumber;
     }
 
-    public int getGameId() {
-        return gameId;
-    }
-
-    public void setGameId(int gameId) {
-        this.gameId = gameId;
-    }
-
-    public int getTurnNumber() {
-        return turnNumber;
-    }
-
-    public void setTurnNumber(int turnNumber) {
-        this.turnNumber = turnNumber;
-    }
-
+    // Override equals() and hashCode()
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MoveId moveId = (MoveId) o;
-        return gameId == moveId.gameId && turnNumber == moveId.turnNumber;
+        return game == moveId.game && turnNumber == moveId.turnNumber;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(gameId, turnNumber);
+        return Objects.hash(game, turnNumber);
     }
+
+    // Getters and setters
+    public int getGame() { return game; }
+    public void setGame(int game) { this.game = game; }
+
+    public int getTurnNumber() { return turnNumber; }
+    public void setTurnNumber(int turnNumber) { this.turnNumber = turnNumber; }
 }
+

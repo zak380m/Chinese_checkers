@@ -4,112 +4,72 @@ import jakarta.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
+@Table(name = "moves")
+@IdClass(MoveId.class)
 public class Move {
 
-    @EmbeddedId
-    private MoveId id;
-
+    @Id
     @ManyToOne
-    @MapsId("gameId")  // Maps gameId from MoveId to game_id in Game entity
     @JoinColumn(name = "game_id", nullable = false)
-    private Game game;
+    private Game game;  // This is mapped to the game_id
+
+    @Id
+    @Column(name = "turn_number", nullable = false)
+    private int turnNumber;
 
     @Column(name = "start_x")
-    private Integer startX;
+    private int startX;
 
     @Column(name = "start_y")
-    private Integer startY;
+    private int startY;
 
     @Column(name = "end_x")
-    private Integer endX;
+    private int endX;
 
     @Column(name = "end_y")
-    private Integer endY;
+    private int endY;
 
     @Column(name = "is_pass", nullable = false)
-    private boolean isPass;
+    private boolean isPass = false;
 
-    @Column(name = "move_timestamp", nullable = false, updatable = false)
+    @Column(name = "move_timestamp", nullable = false)
     private Timestamp moveTimestamp;
-
-    // Constructors, Getters, Setters, etc.
 
     public Move() {}
 
-    public Move(Game game, int turnNumber, Integer startX, Integer startY, Integer endX, Integer endY, boolean isPass) {
-        this.id = new MoveId(game.getId(), turnNumber); // Set composite key
+    public Move(Game game, int turnNumber, int startX, int startY, int endX, int endY, boolean isPass) {
         this.game = game;
+        this.turnNumber = turnNumber;
         this.startX = startX;
         this.startY = startY;
         this.endX = endX;
         this.endY = endY;
         this.isPass = isPass;
-        this.moveTimestamp = new Timestamp(System.currentTimeMillis()); // Set timestamp
+        this.moveTimestamp = new Timestamp(System.currentTimeMillis());
     }
 
-    // Getters and Setters
+    // Getters and setters
+    public Game getGame() { return game; }
+    public void setGame(Game game) { this.game = game; }
 
-    public MoveId getId() {
-        return id;
-    }
+    public int getTurnNumber() { return turnNumber; }
+    public void setTurnNumber(int turnNumber) { this.turnNumber = turnNumber; }
 
-    public void setId(MoveId id) {
-        this.id = id;
-    }
+    public int getStartX() { return startX; }
+    public void setStartX(int startX) { this.startX = startX; }
 
-    public Game getGame() {
-        return game;
-    }
+    public int getStartY() { return startY; }
+    public void setStartY(int startY) { this.startY = startY; }
 
-    public void setGame(Game game) {
-        this.game = game;
-    }
+    public int getEndX() { return endX; }
+    public void setEndX(int endX) { this.endX = endX; }
 
-    public Integer getStartX() {
-        return startX;
-    }
+    public int getEndY() { return endY; }
+    public void setEndY(int endY) { this.endY = endY; }
 
-    public void setStartX(Integer startX) {
-        this.startX = startX;
-    }
+    public boolean isPass() { return isPass; }
+    public void setPass(boolean pass) { isPass = pass; }
 
-    public Integer getStartY() {
-        return startY;
-    }
-
-    public void setStartY(Integer startY) {
-        this.startY = startY;
-    }
-
-    public Integer getEndX() {
-        return endX;
-    }
-
-    public void setEndX(Integer endX) {
-        this.endX = endX;
-    }
-
-    public Integer getEndY() {
-        return endY;
-    }
-
-    public void setEndY(Integer endY) {
-        this.endY = endY;
-    }
-
-    public boolean isPass() {
-        return isPass;
-    }
-
-    public void setPass(boolean pass) {
-        isPass = pass;
-    }
-
-    public Timestamp getMoveTimestamp() {
-        return moveTimestamp;
-    }
-
-    public void setMoveTimestamp(Timestamp moveTimestamp) {
-        this.moveTimestamp = moveTimestamp;
-    }
+    public Timestamp getMoveTimestamp() { return moveTimestamp; }
+    public void setMoveTimestamp(Timestamp moveTimestamp) { this.moveTimestamp = moveTimestamp; }
 }

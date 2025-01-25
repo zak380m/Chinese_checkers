@@ -2,43 +2,44 @@ package zak380mGazyli.Database.Models;
 
 import jakarta.persistence.*;
 import java.sql.Timestamp;
-import java.util.Set;
+import java.util.List;
 
 @Entity
+@Table(name = "games")
 public class Game {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false)
     private String gamemode;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false)
     private String board;
 
-    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "created_at", nullable = false)
     private Timestamp createdAt;
 
-    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Move> moves;
+    @Column(name = "player_number", nullable = false)
+    private int playerNumber = 2;
 
-    // Constructors, Getters, Setters, etc.
+    // Bidirectional mapping with moves
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
+    private List<Move> moves;
 
-    public Game() {}
+    public Game() {
+    }
 
-    public Game(String gamemode, String board) {
+    public Game(String gamemode, String board, int playerNumber) {
         this.gamemode = gamemode;
         this.board = board;
+        this.playerNumber = playerNumber;
+        this.createdAt = new Timestamp(System.currentTimeMillis());
     }
 
-    // Getters and Setters
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getGamemode() {
@@ -61,15 +62,11 @@ public class Game {
         return createdAt;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
+    public int getPlayerNumber() {
+        return playerNumber;
     }
 
-    public Set<Move> getMoves() {
-        return moves;
-    }
-
-    public void setMoves(Set<Move> moves) {
-        this.moves = moves;
+    public void setPlayerNumber(int playerNumber) {
+        this.playerNumber = playerNumber;
     }
 }

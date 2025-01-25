@@ -152,6 +152,7 @@ public class PlayerHandler implements Runnable {
             out.flush();
         } catch (IOException e) {
             System.out.println("Failed to send error message to a player - connection lost.");
+            handleDisconnection();
         }
     }
 
@@ -161,6 +162,7 @@ public class PlayerHandler implements Runnable {
             out.flush();
         } catch (IOException e) {
             System.out.println("Failed to send json reply to a player - connection lost.");
+            handleDisconnection();
         }
     }
 
@@ -222,7 +224,7 @@ public class PlayerHandler implements Runnable {
                 sendErrorMessage("Try again, wrong setup.");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            handleDisconnection();
         }
     }
 
