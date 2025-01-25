@@ -25,7 +25,7 @@ public class GameBuilder {
      * Constructs a GameBuilder instance and populates the game list.
      */
     public GameBuilder() {
-        populateGamelist();
+        if(gameNameList.isEmpty())populateGamelist();
     }
 
     /**

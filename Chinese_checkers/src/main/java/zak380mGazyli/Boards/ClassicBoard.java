@@ -136,4 +136,8 @@ public class ClassicBoard implements Board {
             cells[cord[0]][cord[1]].setSymbol("O");
         }
     }
+
+    public String getName() {
+        return "Classic";
+    }
 }

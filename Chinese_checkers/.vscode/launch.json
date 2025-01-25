@@ -1,0 +1,28 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "App",
+            "request": "launch",
+            "mainClass": "zak380mGazyli.App",
+            "projectName": "Chinese_checkers"
+        },
+        {
+            "type": "java",
+            "name": "Client",
+            "request": "launch",
+            "mainClass": "zak380mGazyli.Client",
+            "projectName": "Chinese_checkers"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-Server<Chinese_checkers>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "zak380mGazyli.Server",
+            "projectName": "Chinese_checkers",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

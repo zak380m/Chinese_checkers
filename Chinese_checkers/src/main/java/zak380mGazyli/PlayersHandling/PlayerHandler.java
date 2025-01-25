@@ -152,6 +152,7 @@ public class PlayerHandler implements Runnable {
             out.flush();
         } catch (IOException e) {
             System.out.println("Failed to send error message to a player - connection lost.");
+            handleDisconnection();
         }
     }
 
@@ -161,6 +162,7 @@ public class PlayerHandler implements Runnable {
             out.flush();
         } catch (IOException e) {
             System.out.println("Failed to send json reply to a player - connection lost.");
+            handleDisconnection();
         }
     }
 
@@ -198,6 +200,11 @@ public class PlayerHandler implements Runnable {
         System.out.println("Getting setup from player");
         try {
             String jsonString = (String) in.readObject();
+            if(jsonString.contains("quit")) {
+                isConnected = false;
+                handleDisconnection();
+                return null;
+            }
             return gson.fromJson(jsonString, SetUp.class);
         } catch (IOException | ClassNotFoundException e) {
             sendErrorMessage("Wrong setup.");
@@ -222,7 +229,7 @@ public class PlayerHandler implements Runnable {
                 sendErrorMessage("Try again, wrong setup.");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            handleDisconnection();
         }
     }
 
@@ -244,7 +251,7 @@ public class PlayerHandler implements Runnable {
         }
         Gamemode gamemode = gamemodeBuilder.getGamemode();
         System.out.println("Gamemode set up is done.");
-        GameRoom gameRoom = server.createGameRoom(gamemode, board, password, playerCount, botCount);
+        GameRoom gameRoom = server.createGameRoom(gamemode, board, password, playerCount, botCount, null);
         if(gameRoom != null) {
             System.out.println("Game room created.");
             if(gameRoom.addPlayer(this)) return true;

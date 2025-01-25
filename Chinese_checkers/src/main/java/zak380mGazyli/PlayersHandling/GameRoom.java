@@ -2,27 +2,37 @@ package zak380mGazyli.PlayersHandling;
 
 import java.util.*;
 
+import javax.print.attribute.standard.Media;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.google.gson.Gson;
 
+import zak380mGazyli.Mediator;
 import zak380mGazyli.Server;
 import zak380mGazyli.Boards.Board;
 import zak380mGazyli.Bots.Bot;
+import zak380mGazyli.Database.Models.Game;
+import zak380mGazyli.Database.Models.Move;
 import zak380mGazyli.Gamemodes.Gamemode;
 import zak380mGazyli.Misc.GameState;
 
 public class GameRoom {
-    private Server server;
+    private final Server server;
     private String password;
-    private int roomId;
-    private int numberOfPlayers;
-    private int numberOfBots;
-    private Map<Integer, PlayerHandler> players;
-    private Map<Integer, Bot> bots;
-    private Board board;
-    private Gamemode gamemode;
+    private final int roomId;
+    private final int numberOfPlayers;
+    private final int numberOfBots;
+    private final Map<Integer, PlayerHandler> players;
+    private final Map<Integer, Bot> bots;
+    private final Board board;
+    private final Gamemode gamemode;
+    private final Mediator mediator;
     private int realNumberOfPlayers;
+    private Game game;
 
-    public GameRoom(Gamemode gamemode, Board board, String password, int numberOfPlayers, int numberOfBots, int roomId, Server server) {
+    public GameRoom(Gamemode gamemode, Board board, String password, int numberOfPlayers, int numberOfBots, int roomId, Server server, Mediator mediator) {
         this.gamemode = gamemode;
         this.server = server;
         this.board = board;
@@ -31,11 +41,20 @@ public class GameRoom {
         this.numberOfBots = numberOfBots;
         this.roomId = roomId;
         this.realNumberOfPlayers = numberOfBots;
+        this.mediator = mediator;
         bots = new HashMap<>();
         players = new HashMap<>();
         for (int i = 0; i < numberOfPlayers; i++) {
             players.put(i, null);
         }
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    public Game getGame() {
+        return game;
     }
 
     public String getGamemodeName() {
@@ -91,12 +110,16 @@ public class GameRoom {
     public synchronized void processMove(int startX, int startY, int endX, int endY) {
         if (gamemode.validateMove(startX, startY, endX, endY, board)) {
             gamemode.processMove(startX, startY, endX, endY, board);
+            Move move = new Move(game, gamemode.getTurnCount(), startX, startY, endX, endY, false);
+            mediator.addMove(move);
             broadcastCurrentGameState();
         }
     }
 
     public synchronized void processPass() {
         gamemode.processPass();
+        Move move = new Move(game, gamemode.getTurnCount(), 0, 0, 0, 0, true);
+        mediator.addMove(move);
         broadcastCurrentGameState();
     }
 

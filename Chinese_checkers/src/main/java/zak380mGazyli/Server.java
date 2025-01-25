@@ -5,25 +5,38 @@ import java.net.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import jakarta.annotation.PostConstruct;
 import zak380mGazyli.Boards.Board;
+import zak380mGazyli.Database.Models.Game;
 import zak380mGazyli.Gamemodes.Gamemode;
 import zak380mGazyli.PlayersHandling.*;
 
 /**
  * The Server class represents a game server that manages game rooms and player connections.
  */
-public class Server {
-    private Map<Integer, GameRoom> gameRooms = new HashMap<>();
+@SpringBootApplication
+public class Server{
+    private final Map<Integer, GameRoom> gameRooms = new HashMap<>();
     private int roomCounter = 0;
 
-    /**
-     * The main method to start the server.
-     *
-     * @param args Command line arguments.
-     * @throws IOException If an I/O error occurs.
-     */
-    public static void main(String[] args) throws IOException {
-        new Server().startServer();
+    @Autowired
+    private Mediator mediator;
+
+    public static void main(String[] args) {
+        SpringApplication.run(Server.class, args);
+    }
+
+    @PostConstruct
+    public void init() {
+        try {
+            startServer();
+        } catch (IOException e) {
+            System.out.println("Failed to start the server: " + e.getMessage());
+        }
     }
 
     /**
@@ -56,8 +69,12 @@ public class Server {
      * @param numberOfBots The number of bots in the new room.
      * @return The created GameRoom instance.
      */
-    public synchronized GameRoom createGameRoom(Gamemode gamemode, Board board, String password, int numberOfPlayers, int numberOfBots) {
-        GameRoom newRoom = new GameRoom(gamemode, board, password, numberOfPlayers, numberOfBots, roomCounter++, this);
+    public synchronized GameRoom createGameRoom(Gamemode gamemode, Board board, String password, int numberOfPlayers, int numberOfBots, Game game) {
+        GameRoom newRoom = new GameRoom(gamemode, board, password, numberOfPlayers, numberOfBots, roomCounter++, this, mediator);
+        if((newRoom != null) && (game == null) ) {
+            game = saveGameToDatabase(gamemode, board, numberOfBots + numberOfPlayers);
+        }
+        newRoom.setGame(game);
         for(int i = 1; i <= roomCounter; i++) {
             if(gameRooms.get(i) == null) {
                 gameRooms.put(i, newRoom);
@@ -66,6 +83,18 @@ public class Server {
         }
         gameRooms.put(roomCounter, newRoom);
         return newRoom;
+    }
+
+    private Game saveGameToDatabase(Gamemode gamemode, Board board, int numberOfPlayers) {
+        try {
+            Game newGame = new Game(gamemode.getName(), board.getName(), numberOfPlayers);
+            mediator.addGame(newGame);
+            System.out.println("Game saved to the database with ID: " + newGame.getId());
+            return newGame;
+        } catch (Exception e) {
+            System.out.println("Failed to save the game to the database: " + e.getMessage());
+            return null;
+        }
     }
 
     /**
@@ -98,5 +127,9 @@ public class Server {
                 break;
             }
         }
+    }
+
+    public synchronized void deleteGameRoomByID(int gameID) {
+        mediator.deleteGame(gameID);
     }
 }

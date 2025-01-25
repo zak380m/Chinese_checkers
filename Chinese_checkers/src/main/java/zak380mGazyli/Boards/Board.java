@@ -42,4 +42,6 @@ public interface Board {
      * Displays the current state of the board.
      */
     void displayBoard();
+
+    String getName();
 }
