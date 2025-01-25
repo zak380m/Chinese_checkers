@@ -251,7 +251,7 @@ public class PlayerHandler implements Runnable {
         }
         Gamemode gamemode = gamemodeBuilder.getGamemode();
         System.out.println("Gamemode set up is done.");
-        GameRoom gameRoom = server.createGameRoom(gamemode, board, password, playerCount, botCount);
+        GameRoom gameRoom = server.createGameRoom(gamemode, board, password, playerCount, botCount, null);
         if(gameRoom != null) {
             System.out.println("Game room created.");
             if(gameRoom.addPlayer(this)) return true;

@@ -12,7 +12,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import jakarta.annotation.PostConstruct;
 import zak380mGazyli.Boards.Board;
 import zak380mGazyli.Database.Models.Game;
-import zak380mGazyli.Database.Service.GameService;
 import zak380mGazyli.Gamemodes.Gamemode;
 import zak380mGazyli.PlayersHandling.*;
 
@@ -25,7 +24,7 @@ public class Server{
     private int roomCounter = 0;
 
     @Autowired
-    private GameService gameService;
+    private Mediator mediator;
 
     public static void main(String[] args) {
         SpringApplication.run(Server.class, args);
@@ -70,11 +69,12 @@ public class Server{
      * @param numberOfBots The number of bots in the new room.
      * @return The created GameRoom instance.
      */
-    public synchronized GameRoom createGameRoom(Gamemode gamemode, Board board, String password, int numberOfPlayers, int numberOfBots) {
-        GameRoom newRoom = new GameRoom(gamemode, board, password, numberOfPlayers, numberOfBots, roomCounter++, this);
-        if(newRoom != null) {
-            saveGameToDatabase(gamemode, board, numberOfBots + numberOfPlayers);
+    public synchronized GameRoom createGameRoom(Gamemode gamemode, Board board, String password, int numberOfPlayers, int numberOfBots, Game game) {
+        GameRoom newRoom = new GameRoom(gamemode, board, password, numberOfPlayers, numberOfBots, roomCounter++, this, mediator);
+        if((newRoom != null) && (game == null) ) {
+            game = saveGameToDatabase(gamemode, board, numberOfBots + numberOfPlayers);
         }
+        newRoom.setGame(game);
         for(int i = 1; i <= roomCounter; i++) {
             if(gameRooms.get(i) == null) {
                 gameRooms.put(i, newRoom);
@@ -85,16 +85,15 @@ public class Server{
         return newRoom;
     }
 
-    private void saveGameToDatabase(Gamemode gamemode, Board board, int numberOfPlayers) {
+    private Game saveGameToDatabase(Gamemode gamemode, Board board, int numberOfPlayers) {
         try {
             Game newGame = new Game(gamemode.getName(), board.getName(), numberOfPlayers);
-            
-            // Use the gameService to save the game to the database
-            gameService.createGame(newGame);
-
+            mediator.addGame(newGame);
             System.out.println("Game saved to the database with ID: " + newGame.getId());
+            return newGame;
         } catch (Exception e) {
             System.out.println("Failed to save the game to the database: " + e.getMessage());
+            return null;
         }
     }
 
@@ -129,5 +128,9 @@ public class Server{
                 break;
             }
         }
+    }
+
+    public synchronized void deleteGameRoomByID(int gameID) {
+        mediator.deleteGame(gameID);
     }
 }
