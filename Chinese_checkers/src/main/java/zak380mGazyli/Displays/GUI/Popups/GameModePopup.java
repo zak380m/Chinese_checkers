@@ -61,7 +61,7 @@ public class GameModePopup {
         gamemodeChooser.getSelectionModel().select(1);
         gamemodeChooser.setPrefWidth(100);
 
-        ComboBox<String> boardChooser = new ComboBox<>(observableArrayList("placeholder"));
+        ComboBox<String> boardChooser = new ComboBox<>(observableArrayList(boards));
 
         boardChooser.setPromptText("Board");
         boardChooser.getSelectionModel().select(0);
@@ -69,15 +69,11 @@ public class GameModePopup {
 
         TextField playerNumber = new TextField();
         playerNumber.setPromptText("Number of Players");
-//        playerNumber.setMaxWidth(25);
-//        playerNumber.setAlignment(Pos.CENTER);
         playerNumber.setText("2");
         playerNumber.setPrefWidth(100);
 
         TextField botNumber = new TextField();
         botNumber.setPromptText("Number of Bots");
-//        botNumber.setMaxWidth(25);
-//        botNumber.setAlignment(Pos.CENTER);
         botNumber.setText("0");
         botNumber.setPrefWidth(100);
 
@@ -153,7 +149,7 @@ public class GameModePopup {
      * @param gamemodeChooser The combo box for selecting the game mode.
      * @param playerNumber The text field for the number of players.
      */
-    private void handleStartButtonAction(Stage popupStage, TextField roomName, ComboBox<String> gamemodeChooser, ComboBox  boardChooser, TextField playerNumber, TextField botNumber) {
+    private void handleStartButtonAction(Stage popupStage, TextField roomName, ComboBox<String> gamemodeChooser, ComboBox<String> boardChooser, TextField playerNumber, TextField botNumber) {
         try {
             int numberOfPlayers = Integer.parseInt(playerNumber.getText());
             if (numberOfPlayers <= 0) {
@@ -164,7 +160,7 @@ public class GameModePopup {
             setUp.setPassword(roomName.getText());
             if (getCreate()) {
                 setUp.setGamemode(gamemodeChooser.getValue());
-                setUp.setBoard((String) boardChooser.getValue()); //temporary cast
+                setUp.setBoard(boardChooser.getValue());
                 setUp.setPlayerCount(numberOfPlayers);
                 setUp.setBotCount(Integer.parseInt(botNumber.getText()));
             }

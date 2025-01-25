@@ -214,13 +214,13 @@ public class PlayerHandler implements Runnable {
 
     private void gettingReady() {
         try {
-            SetUp setUp = new SetUp(gameBuilder.getGameList(), gameBuilder.getBoardList());
+            SetUp setUp = new SetUp(gameBuilder.getGamemodesList(), gameBuilder.getBoardsList());
             sendSetUp(setUp);
             try {
                 System.out.println("Waiting for setup.");
                 SetUp info = getSetUp();
                 if (info.isCreate()) {
-                    if(createGameRoom(info.getGamemode(), info.getPlayerCount(), info.getBotCount(), info.getPassword())) isReady = true;
+                    if(createGameRoom(info.getGamemode(), info.getBoard(), info.getPlayerCount(), info.getBotCount(), info.getPassword())) isReady = true;
                 } else if(info.isLoad()) {
                     GameRoom gameRoom = server.loadGameRoom(info.getGameId(), info.getPassword());
                     if(gameRoom != null) isReady = gameRoom.addPlayer(this);
@@ -236,9 +236,10 @@ public class PlayerHandler implements Runnable {
         }
     }
 
-    public boolean createGameRoom(String gamemodeName, int playerCount, int botCount, String password) {
+    public boolean createGameRoom(String gamemodeName, String boardName, int playerCount, int botCount, String password) {
         System.out.println("Setting up gamemode: " + gamemodeName);
-        gameBuilder.setGameName(gamemodeName);
+        gameBuilder.setGamemodeName(gamemodeName);
+        gameBuilder.setBoardName(boardName);
         GamemodeBuilder gamemodeBuilder = gameBuilder.getGamemodeBuilder();
         BoardBuilder boardBuilder = gameBuilder.getBoardBuilder();
         boardBuilder.buildBoard(playerCount);
