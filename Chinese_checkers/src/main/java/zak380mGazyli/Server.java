@@ -6,8 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import jakarta.annotation.PostConstruct;
 import zak380mGazyli.Boards.Board;
 import zak380mGazyli.Database.Models.Game;
 import zak380mGazyli.Database.Service.GameService;
@@ -17,13 +19,26 @@ import zak380mGazyli.PlayersHandling.*;
 /**
  * The Server class represents a game server that manages game rooms and player connections.
  */
-@Service
-public class Server {
+@SpringBootApplication
+public class Server{
     private final Map<Integer, GameRoom> gameRooms = new HashMap<>();
     private int roomCounter = 0;
 
     @Autowired
     private GameService gameService;
+
+    public static void main(String[] args) {
+        SpringApplication.run(Server.class, args);
+    }
+
+    @PostConstruct
+    public void init() {
+        try {
+            startServer();
+        } catch (IOException e) {
+            System.out.println("Failed to start the server: " + e.getMessage());
+        }
+    }
 
     /**
      * Starts the server, listens for player connections, and handles them.

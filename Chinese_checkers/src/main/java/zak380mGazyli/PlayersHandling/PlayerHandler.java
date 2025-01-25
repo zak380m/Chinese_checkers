@@ -200,6 +200,11 @@ public class PlayerHandler implements Runnable {
         System.out.println("Getting setup from player");
         try {
             String jsonString = (String) in.readObject();
+            if(jsonString.contains("quit")) {
+                isConnected = false;
+                handleDisconnection();
+                return null;
+            }
             return gson.fromJson(jsonString, SetUp.class);
         } catch (IOException | ClassNotFoundException e) {
             sendErrorMessage("Wrong setup.");
