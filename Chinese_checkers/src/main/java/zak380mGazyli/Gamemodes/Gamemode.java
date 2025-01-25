@@ -80,6 +80,8 @@ public interface Gamemode {
      */
     public int getTurnCount();
 
+    public void setTurnCount(int turnCount);
+
     /**
      * Gets the color of the specified player.
      *
