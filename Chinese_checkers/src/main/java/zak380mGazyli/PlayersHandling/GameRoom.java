@@ -2,16 +2,12 @@ package zak380mGazyli.PlayersHandling;
 
 import java.util.*;
 
-import javax.print.attribute.standard.Media;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.google.gson.Gson;
 
 import zak380mGazyli.Mediator;
 import zak380mGazyli.Server;
 import zak380mGazyli.Boards.Board;
+import zak380mGazyli.Bots.BasicBot;
 import zak380mGazyli.Bots.Bot;
 import zak380mGazyli.Database.Models.Game;
 import zak380mGazyli.Database.Models.Move;
@@ -40,12 +36,17 @@ public class GameRoom {
         this.numberOfPlayers = numberOfPlayers;
         this.numberOfBots = numberOfBots;
         this.roomId = roomId;
-        this.realNumberOfPlayers = numberOfBots;
         this.mediator = mediator;
         bots = new HashMap<>();
         players = new HashMap<>();
+        realNumberOfPlayers = 0;
         for (int i = 0; i < numberOfPlayers; i++) {
             players.put(i, null);
+        }
+        for(int i = 0; i < numberOfBots; i++) {
+            bots.put(i, new BasicBot());
+            bots.get(i).setGame(this, gamemode, board, i + numberOfPlayers);
+            new Thread(bots.get(i)).start();
         }
     }
 
@@ -171,7 +172,7 @@ public class GameRoom {
     }
 
     public int getNumberOfPlayers() {
-        return numberOfPlayers;
+        return numberOfPlayers + numberOfBots;
     }  
 
     public boolean isGameFinished() {

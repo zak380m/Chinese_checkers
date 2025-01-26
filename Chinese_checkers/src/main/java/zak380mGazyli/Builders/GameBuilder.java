@@ -50,7 +50,7 @@ public class GameBuilder {
     }
 
     private void populateBoardList() {
-        boardBuilders.put("ClassicBoard", new ClassicBoardBuilder());
+        boardBuilders.put("Classic", new ClassicBoardBuilder());
     }
 
     public void registerBoardBuilder(String boardName, BoardBuilder boardBuilder) {

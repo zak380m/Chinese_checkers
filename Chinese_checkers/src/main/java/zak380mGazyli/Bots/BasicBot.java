@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Random;
 
 public class BasicBot implements Bot {
+    private GameRoom gameroom;
     private Gamemode gamemode;
     private boolean isConnected;
     private int playerNumber;
@@ -22,6 +23,7 @@ public class BasicBot implements Bot {
     private Boolean goodMovesAviableFlag = false;
 
     public void setGame(GameRoom gameroom, Gamemode gamemode, Board board, int playerNumber) {
+        this.gameroom = gameroom;
         this.gamemode = gamemode;
         this.playerNumber = playerNumber;
         this.isConnected = true;
@@ -69,7 +71,9 @@ public class BasicBot implements Bot {
             if (gamemode.getTurn() == playerNumber) {
                 int[] move = getBestMove();
                 if (move != null && goodMovesAviableFlag) {
-                    gamemode.processMove(move[0], move[1], move[2], move[3], board);
+                    gameroom.processMove(move[0], move[1], move[2], move[3]);
+                } else {
+                    gameroom.processPass();
                 }
             }
             if (gamemode.playerPlace().get(playerNumber) != 0) {
@@ -120,8 +124,8 @@ public class BasicBot implements Bot {
 
         if (distanceMovedTowardsOppositeCorner > 0) {
             goodMovesAviableFlag = true;
-//        } else {
-//            return 0;
+        } else {
+            return 0;
         }
 
         return distanceMoved + distanceMovedTowardsOppositeCorner;
@@ -141,14 +145,14 @@ public class BasicBot implements Bot {
             for (int i = 0; i < board.getBoard().length; i++) {
                 for (int j = 0; j < board.getBoard()[0].length; j++) {
                     int[] targetCoordinates = {i, j};
-                    if (gamemode.validateMove(pawnCoordinates[0], pawnCoordinates[1], targetCoordinates[0], targetCoordinates[1], board)) {
+                    if (gamemode.validateMove(pawnCoordinates[1], pawnCoordinates[0], targetCoordinates[1], targetCoordinates[0], board)) {
                         int moveScore = evaluateMove(pawnCoordinates, targetCoordinates);
                         if (moveScore > bestMoveScore) {
                             bestMoveScore = moveScore;
                             bestMoves.clear();
-                            bestMoves.add(new int[]{pawnCoordinates[0], pawnCoordinates[1], targetCoordinates[0], targetCoordinates[1]});
+                            bestMoves.add(new int[]{pawnCoordinates[1], pawnCoordinates[0], targetCoordinates[1], targetCoordinates[0]});
                         } else if (moveScore == bestMoveScore) {
-                            bestMoves.add(new int[]{pawnCoordinates[0], pawnCoordinates[1], targetCoordinates[0], targetCoordinates[1]});
+                            bestMoves.add(new int[]{pawnCoordinates[1], pawnCoordinates[0], targetCoordinates[1], targetCoordinates[0]});
                         }
                     }
                 }

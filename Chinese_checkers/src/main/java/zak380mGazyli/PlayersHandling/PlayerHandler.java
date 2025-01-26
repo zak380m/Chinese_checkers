@@ -26,7 +26,7 @@ public class PlayerHandler implements Runnable {
     private ObjectInputStream in;
     private Gamemode gamemode;
     private int playerNumber;
-    private volatile Boolean isConnected;
+    private Boolean isConnected;
     private Gson gson;
     private Map<String, CommandHandler> commandHandlers;
     private volatile boolean isReady;
@@ -66,7 +66,7 @@ public class PlayerHandler implements Runnable {
     public void run() {
         try {
             while (isConnected) {
-                while (!isReady){
+                while (!isReady && isConnected) {
                     gettingReady();
                 }
                 String jsonString = (String) in.readObject();
@@ -242,20 +242,20 @@ public class PlayerHandler implements Runnable {
         gameBuilder.setBoardName(boardName);
         GamemodeBuilder gamemodeBuilder = gameBuilder.getGamemodeBuilder();
         BoardBuilder boardBuilder = gameBuilder.getBoardBuilder();
-        boardBuilder.buildBoard(playerCount);
+        boardBuilder.buildBoard(playerCount + botCount);
         if(boardBuilder.getBoard() == null) {
             System.out.println("Board setup failed.");
             return false;
         }
         Board board = boardBuilder.getBoard();
-        gamemodeBuilder.buildGamemode(playerCount, board);
+        gamemodeBuilder.buildGamemode(playerCount + botCount, board);
         if(gamemodeBuilder.getGamemode() == null) {
             System.out.println("Gamemode setup failed.");
             return false;
         }
         Gamemode gamemode = gamemodeBuilder.getGamemode();
         System.out.println("Gamemode set up is done.");
-        GameRoom gameRoom = server.createGameRoom(gamemode, board, password, playerCount, botCount);
+        GameRoom gameRoom = server.createGameRoom(gamemode, board, password, playerCount, botCount, null);
         if(gameRoom != null) {
             System.out.println("Game room created.");
             if(gameRoom.addPlayer(this)) return true;

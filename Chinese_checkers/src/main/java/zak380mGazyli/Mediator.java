@@ -11,7 +11,6 @@ import zak380mGazyli.Builders.GamemodeBuilders.GamemodeBuilder;
 import zak380mGazyli.Database.Models.*;
 import zak380mGazyli.Database.Service.*;
 import zak380mGazyli.Gamemodes.Gamemode;
-import zak380mGazyli.Misc.GameState;
 import zak380mGazyli.PlayersHandling.GameRoom;
 
 @Service
@@ -70,7 +69,7 @@ public class Mediator {
         }
         Gamemode gamemode = gamemodeBuilder.getGamemode();
         System.out.println("Gamemode is loaded succesfully.");
-        return server.createGameRoom(gamemode, board, password, game.getPlayerNumber(), 0);
+        return server.createGameRoom(gamemode, board, password, game.getPlayerNumber(), 0, game);
     }
 
     public void playGame(GameRoom room) {

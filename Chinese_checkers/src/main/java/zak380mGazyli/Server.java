@@ -70,10 +70,9 @@ public class Server{
      * @param numberOfBots The number of bots in the new room.
      * @return The created GameRoom instance.
      */
-    public synchronized GameRoom createGameRoom(Gamemode gamemode, Board board, String password, int numberOfPlayers, int numberOfBots) {
+    public synchronized GameRoom createGameRoom(Gamemode gamemode, Board board, String password, int numberOfPlayers, int numberOfBots, Game game) {
         GameRoom newRoom = new GameRoom(gamemode, board, password, numberOfPlayers, numberOfBots, roomCounter++, this, mediator);
-        Game game = null;
-        if((newRoom != null)) {
+        if((newRoom != null && game == null)) {
             game = saveGameToDatabase(gamemode, board, numberOfBots + numberOfPlayers);
         }
         newRoom.setGame(game);
@@ -115,9 +114,19 @@ public class Server{
     }
 
     public synchronized GameRoom loadGameRoom(int gameID, String password) {
+        for (int i = 1; i <= roomCounter; i++) {
+            if (gameRooms.get(i).getGame().getId() == gameID) {
+                if(gameRooms.get(i).areThereMissingPlayers()) {
+                    return gameRooms.get(i);
+                } else {
+                    return null;
+                }
+            }
+        }
         GameRoom oldRoom = mediator.loadRoom(gameID, password);
         if(oldRoom != null) {
             mediator.playGame(oldRoom);
+            oldRoom.broadcastCurrentGameState();
         }
         return oldRoom;
     }
