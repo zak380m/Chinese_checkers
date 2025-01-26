@@ -28,6 +28,7 @@ public class GameModePopup {
     private final List<String> gamemodes;
     private final List<String> boards;
     private Boolean create;
+    private Boolean load;
 
     /**
      * Constructs a new GameModePopup.
@@ -55,6 +56,10 @@ public class GameModePopup {
         roomName.setPromptText("Room Name");
         roomName.setPrefWidth(100);
 
+        TextField gameID = new TextField();
+        roomName.setPromptText("Game ID");
+        roomName.setPrefWidth(100);
+
         ComboBox<String> gamemodeChooser = new ComboBox<>(observableArrayList(gamemodes));
 
         gamemodeChooser.setPromptText("Gamemode");
@@ -79,13 +84,13 @@ public class GameModePopup {
 
         roomName.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
-                handleStartButtonAction(popupStage, roomName, gamemodeChooser, boardChooser, playerNumber, botNumber);
+                handleStartButtonAction(popupStage, roomName, gameID, gamemodeChooser, boardChooser, playerNumber, botNumber);
             }
         });
 
         playerNumber.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
-                handleStartButtonAction(popupStage, roomName, gamemodeChooser, boardChooser, playerNumber,  botNumber);
+                handleStartButtonAction(popupStage, roomName, gameID, gamemodeChooser, boardChooser, playerNumber,  botNumber);
             }
         });
 
@@ -98,7 +103,7 @@ public class GameModePopup {
         gridConfig.add(roomName, 1, 0);
 
         Button startButton = new Button("Start");
-        startButton.setOnAction(e -> handleStartButtonAction(popupStage, roomName, gamemodeChooser, boardChooser, playerNumber, botNumber));
+        startButton.setOnAction(e -> handleStartButtonAction(popupStage, roomName, gameID, gamemodeChooser, boardChooser, playerNumber, botNumber));
         startButton.setMaxWidth(Double.MAX_VALUE);
 
         VBox vboxConfig = new VBox(10, gridConfig, startButton);
@@ -111,6 +116,7 @@ public class GameModePopup {
         Button createButton = new Button("Create Room");
         createButton.setOnAction(e -> {
             setCreate(true);
+            setLoad(false);
             gridConfig.add(new Label("Gamemode:"), 0, 1);
             gridConfig.add(gamemodeChooser, 1, 1);
             gridConfig.add(new Label("Board:"), 0, 2);
@@ -125,13 +131,23 @@ public class GameModePopup {
         Button joinButton = new Button("Join Room");
         joinButton.setOnAction(e -> {
             setCreate(false);
+            setLoad(false);
+            popupStage.setScene(configScene);
+        });
+
+        Button loadButton = new Button("Load game");
+        loadButton.setOnAction(e -> {
+            setCreate(false);
+            setLoad(true);
+            gridConfig.add(new Label("Game ID:"), 0, 1);
+            gridConfig.add(gameID, 1, 1);
             popupStage.setScene(configScene);
         });
 
         Label chooseLabel = new Label("Do you want to create a new room\nor join an existing one?");
         chooseLabel.setTextAlignment(TextAlignment.CENTER);
 
-        VBox chooseBox = new VBox(10, chooseLabel, createButton, joinButton);
+        VBox chooseBox = new VBox(10, chooseLabel, createButton, joinButton, loadButton);
         chooseBox.setPadding(new Insets(10));
         chooseBox.setAlignment(Pos.CENTER);
 
@@ -140,29 +156,24 @@ public class GameModePopup {
         popupStage.show();
     }
 
-    /**
-     * Handles the action when the start button is pressed.
-     * Validates the input and sets up the game configuration.
-     *
-     * @param popupStage The stage of the popup window.
-     * @param roomName The text field for the room name.
-     * @param gamemodeChooser The combo box for selecting the game mode.
-     * @param playerNumber The text field for the number of players.
-     */
-    private void handleStartButtonAction(Stage popupStage, TextField roomName, ComboBox<String> gamemodeChooser, ComboBox<String> boardChooser, TextField playerNumber, TextField botNumber) {
+    private void handleStartButtonAction(Stage popupStage, TextField roomName, TextField gameID, ComboBox<String> gamemodeChooser, ComboBox<String> boardChooser, TextField playerNumber, TextField botNumber) {
         try {
-            int numberOfPlayers = Integer.parseInt(playerNumber.getText());
-            if (numberOfPlayers <= 0) {
-                throw new IllegalArgumentException("Invalid number of players.");
-            }
             SetUp setUp = new SetUp();
-            setUp.setCreate(getCreate());
             setUp.setPassword(roomName.getText());
             if (getCreate()) {
+                setUp.setCreate(true);
+                setUp.setLoad(false);
                 setUp.setGamemode(gamemodeChooser.getValue());
                 setUp.setBoard(boardChooser.getValue());
-                setUp.setPlayerCount(numberOfPlayers);
+                setUp.setPlayerCount(Integer.parseInt(playerNumber.getText()));
                 setUp.setBotCount(Integer.parseInt(botNumber.getText()));
+            } else if (getLoad()) {
+                setUp.setCreate(false);
+                setUp.setLoad(true);
+                setUp.setGameId(Integer.parseInt(gameID.getText()));
+            } else {
+                setUp.setCreate(false);
+                setUp.setLoad(false);
             }
             GUIDisplay.setCurrentCommand(setUp);
             popupStage.close();
@@ -186,7 +197,15 @@ public class GameModePopup {
      *
      * @return The create flag.
      */
-    public Boolean getCreate() {
+    private Boolean getCreate() {
         return create;
+    }
+
+    private void setLoad(Boolean load) {
+        this.load = load;
+    }
+
+    private Boolean getLoad() {
+        return load;
     }
 }

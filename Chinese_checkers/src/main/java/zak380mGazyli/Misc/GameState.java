@@ -14,6 +14,7 @@ public class GameState {
     private final Map<Integer, Integer> playerPlace;
     private final int currentPlayerTurn;
     private final boolean isPass;
+    private final int gameID;
 
     /**
      * Constructs a GameState instance with the specified parameters.
@@ -27,7 +28,7 @@ public class GameState {
      * @param playerColor The color of the player.
      * @param turnCount The number of turns taken.
      */
-    public GameState(int currentPlayerTurn, Cell[][] boardState, int playerNumber, int whoMoved, Map<Integer, Integer> playerPlace, boolean isPass, String playerColor, int turnCount) {
+    public GameState(int currentPlayerTurn, Cell[][] boardState, int playerNumber, int whoMoved, Map<Integer, Integer> playerPlace, boolean isPass, String playerColor, int turnCount, int gameID) {
         this.currentPlayerTurn = currentPlayerTurn;
         this.boardState = boardState;
         this.playerNumber = playerNumber;
@@ -36,6 +37,7 @@ public class GameState {
         this.isPass = isPass;
         this.playerColor = playerColor;
         this.turnCount = turnCount;
+        this.gameID = gameID;
     }
 
     /**
@@ -108,5 +110,9 @@ public class GameState {
      */
     public int getCurrentPlayerTurn() {
         return currentPlayerTurn;
+    }
+
+    public int getGameID() {
+        return gameID;
     }
 }

@@ -152,7 +152,7 @@ public class GameRoom {
     public String currentGameState(int playerNumber) {
         Gson gson = new Gson();
         GameState data = new GameState(gamemode.getTurn(), board.getBoard(), playerNumber, (gamemode.getTurn()-1+numberOfPlayers)%numberOfPlayers
-        , gamemode.playerPlace(), gamemode.isPass(), gamemode.getPlayerColor(playerNumber), gamemode.getTurnCount());
+        , gamemode.playerPlace(), gamemode.isPass(), gamemode.getPlayerColor(playerNumber), gamemode.getTurnCount(), game.getId());
         return gson.toJson(data);
     }
 

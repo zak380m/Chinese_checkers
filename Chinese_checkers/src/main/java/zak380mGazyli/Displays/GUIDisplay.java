@@ -48,6 +48,7 @@ public class GUIDisplay implements Display {
                 GameState gameState = gson.fromJson(jsonResponse, GameState.class);
 
                 GUIApp.setPlayerAttributes(gameState.getPlayerNumber(), gameState.getPlayerColor());
+                GUIApp.setGameID(gameState.getGameID());
                 GUIApp.handlePlayerPosition(gameState.getPlayerPlace());
                 GUIApp.handleCurrentPlayer(gameState.getCurrentPlayerTurn());
                 GUIApp.handleDisplayBoard(gameState.getBoardState());

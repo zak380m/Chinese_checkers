@@ -4,6 +4,10 @@ import zak380mGazyli.Boards.Board;
 import zak380mGazyli.Gamemodes.Gamemode;
 import zak380mGazyli.PlayersHandling.GameRoom;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 public class BasicBot implements Bot {
     private Gamemode gamemode;
     private boolean isConnected;
@@ -11,8 +15,11 @@ public class BasicBot implements Bot {
     private Board board;
     private String color = null;
     private int pawnAmount;
+    private int scaleFactor;
     private int[][] oppositeStartingArea;
     private int[] oppositeCorner;
+    private final Random rand = new Random();
+    private Boolean goodMovesAviableFlag = false;
 
     public void setGame(GameRoom gameroom, Gamemode gamemode, Board board, int playerNumber) {
         this.gamemode = gamemode;
@@ -21,8 +28,16 @@ public class BasicBot implements Bot {
         this.board = board;
         this.color = gamemode.getPlayerColor(playerNumber);
         this.pawnAmount = board.getStartArea(playerNumber).length;
+        this.scaleFactor = calculateScaleFactor();
         this.oppositeStartingArea = findOppositeStartingArea();
         this.oppositeCorner = findOppositeCorner();
+    }
+
+    private int calculateScaleFactor() {
+        double rows = board.getBoard().length;
+        double columns = board.getBoard()[0].length;
+        double ratio = rows / columns;
+        return (int) Math.ceil(ratio*ratio);
     }
 
     private int[][] findOppositeStartingArea() {
@@ -53,9 +68,7 @@ public class BasicBot implements Bot {
         while (isConnected) {
             if (gamemode.getTurn() == playerNumber) {
                 int[] move = getBestMove();
-                if (move == null) {
-                    gamemode.processPass();
-                } else {
+                if (move != null && goodMovesAviableFlag) {
                     gamemode.processMove(move[0], move[1], move[2], move[3], board);
                 }
             }
@@ -91,19 +104,25 @@ public class BasicBot implements Bot {
         int deltaX = Math.abs(pawnCoordinates[0] - targetCoordinates[0]);
         int deltaY = Math.abs(pawnCoordinates[1] - targetCoordinates[1]);
 
-        int distanceMoved = deltaX * deltaX + deltaY * deltaY;
+        int distanceMoved = scaleFactor * deltaX * deltaX + deltaY * deltaY;
 
         int startDeltaXToOppositeCorner = Math.abs(pawnCoordinates[0] - oppositeCorner[0]);
         int startDeltaYToOppositeCorner = Math.abs(pawnCoordinates[1] - oppositeCorner[1]);
 
-        int startDistanceToOppositeCorner = startDeltaXToOppositeCorner * startDeltaXToOppositeCorner + startDeltaYToOppositeCorner * startDeltaYToOppositeCorner;
+        int startDistanceToOppositeCorner = scaleFactor * startDeltaXToOppositeCorner * startDeltaXToOppositeCorner + startDeltaYToOppositeCorner * startDeltaYToOppositeCorner;
 
         int endDeltaXToOppositeCorner = Math.abs(targetCoordinates[0] - oppositeCorner[0]);
         int endDeltaYToOppositeCorner = Math.abs(targetCoordinates[1] - oppositeCorner[1]);
 
-        int endDistanceToOppositeCorner = endDeltaXToOppositeCorner * endDeltaXToOppositeCorner + endDeltaYToOppositeCorner * endDeltaYToOppositeCorner;
+        int endDistanceToOppositeCorner = scaleFactor * endDeltaXToOppositeCorner * endDeltaXToOppositeCorner + endDeltaYToOppositeCorner * endDeltaYToOppositeCorner;
 
         int distanceMovedTowardsOppositeCorner = startDistanceToOppositeCorner - endDistanceToOppositeCorner;
+
+        if (distanceMovedTowardsOppositeCorner > 0) {
+            goodMovesAviableFlag = true;
+//        } else {
+//            return 0;
+        }
 
         return distanceMoved + distanceMovedTowardsOppositeCorner;
     }
@@ -115,7 +134,7 @@ public class BasicBot implements Bot {
         }
 
         int bestMoveScore = 0;
-        int[] bestMove = null;
+        List<int[]> bestMoves = new ArrayList<>();
 
         for (int pawn = 0; pawn < pawnAmount; pawn++) {
             int[] pawnCoordinates = pawnsCoordinates[pawn];
@@ -126,13 +145,16 @@ public class BasicBot implements Bot {
                         int moveScore = evaluateMove(pawnCoordinates, targetCoordinates);
                         if (moveScore > bestMoveScore) {
                             bestMoveScore = moveScore;
-                            bestMove = new int[]{pawnCoordinates[0], pawnCoordinates[1], targetCoordinates[0], targetCoordinates[1]};
+                            bestMoves.clear();
+                            bestMoves.add(new int[]{pawnCoordinates[0], pawnCoordinates[1], targetCoordinates[0], targetCoordinates[1]});
+                        } else if (moveScore == bestMoveScore) {
+                            bestMoves.add(new int[]{pawnCoordinates[0], pawnCoordinates[1], targetCoordinates[0], targetCoordinates[1]});
                         }
                     }
                 }
             }
         }
 
-        return bestMove;
+        return bestMoves.get(rand.nextInt(bestMoves.size()));
     }
 }

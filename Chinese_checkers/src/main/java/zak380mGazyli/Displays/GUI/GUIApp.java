@@ -32,6 +32,7 @@ public class GUIApp extends Application {
     private static ChatBox chatBox;
     private static int playerNumber = -1;
     private static String playerColor = null;
+    private static int gameID = 0;
     private static boolean gameWonScreenShown = false;
 
     /**
@@ -79,6 +80,12 @@ public class GUIApp extends Application {
             GameModePopup popup = new GameModePopup(gamemodes, boards);
             popup.show();
         });
+    }
+
+    public static void setGameID(int gameID) {
+        if (gameID != 0 && GUIApp.gameID == 0) {
+            GUIApp.gameID = gameID;
+        }
     }
 
     /**
@@ -136,10 +143,10 @@ public class GUIApp extends Application {
         Platform.runLater(() -> {
             if (primaryStage != null) {
                 if (player == playerNumber) {
-                    primaryStage.setTitle("Chinese Checkers - " + playerColor + " - your move!");
+                    primaryStage.setTitle("Chinese Checkers (" + gameID + ") - " + playerColor + " - your move!");
                     primaryStage.toFront();
                 } else {
-                    primaryStage.setTitle("Chinese Checkers - Player " + player + "'s turn.");
+                    primaryStage.setTitle("Chinese Checkers (ID: " + gameID + ") - Player " + player + "'s turn.");
                 }
             }
         });
