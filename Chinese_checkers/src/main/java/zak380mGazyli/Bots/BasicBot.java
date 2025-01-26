@@ -5,6 +5,7 @@ import zak380mGazyli.Gamemodes.Gamemode;
 import zak380mGazyli.PlayersHandling.GameRoom;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -17,6 +18,7 @@ public class BasicBot implements Bot {
     private String color = null;
     private int pawnAmount;
     private int scaleFactor;
+    private int startingAreasAmount;
     private int[][] oppositeStartingArea;
     private int[] oppositeCorner;
     private final Random rand = new Random();
@@ -31,6 +33,7 @@ public class BasicBot implements Bot {
         this.color = gamemode.getPlayerColor(playerNumber);
         this.pawnAmount = board.getStartArea(playerNumber).length;
         this.scaleFactor = calculateScaleFactor();
+        this.startingAreasAmount = board.getNeighbours().length;
         this.oppositeStartingArea = findOppositeStartingArea();
         this.oppositeCorner = findOppositeCorner();
     }
@@ -38,26 +41,42 @@ public class BasicBot implements Bot {
     private int calculateScaleFactor() {
         double rows = board.getBoard().length;
         double columns = board.getBoard()[0].length;
-        double ratio = rows / columns;
+        double ratio = columns / rows;
         return (int) Math.ceil(ratio*ratio);
     }
 
+    private int getStartingAreaNumber() {
+        for (int i = 1; i <= startingAreasAmount; i++) {
+            if (board.getBoard()[board.getStartArea(i)[0][0]][board.getStartArea(i)[0][1]].getColor().equals(color)) {
+                System.out.println("Bot " + playerNumber + " is starting in area: " + i);
+                return i;
+            }
+        }
+        return -1;
+    }
+
     private int[][] findOppositeStartingArea() {
-        int startingAreasAmount = board.getNeighbours().length; // could be improved by getting the actual amount of starting areas
-        int oppositeStartingAreaNumber = (playerNumber + startingAreasAmount / 2) % startingAreasAmount;
+        int playerStartingAreaNumber = getStartingAreaNumber();
+        int oppositeStartingAreaNumber = ((playerStartingAreaNumber - 1)+ startingAreasAmount / 2) % startingAreasAmount + 1;
+        System.out.println("Bot " + playerNumber + " is opposite to area: " + oppositeStartingAreaNumber);
         return board.getStartArea(oppositeStartingAreaNumber);
     }
 
     private int[] findOppositeCorner() {
-        int[] boardCenter = {board.getBoard().length / 2, board.getBoard()[0].length / 2};
+        int[] boardCenter = new int[]{board.getBoard().length / 2, board.getBoard()[0].length / 2};
 
-        int[] oppositeCorner = boardCenter.clone();
+        int[] oppositeCorner = new int[2];
+
+        int previousDistanceToCenter = 0;
 
         for (int[] cell : oppositeStartingArea) {
             int deltaX = Math.abs(cell[0] - boardCenter[0]);
             int deltaY = Math.abs(cell[1] - boardCenter[1]);
 
-            if (deltaX * deltaX + deltaY * deltaY > oppositeCorner[0] * oppositeCorner[0] + oppositeCorner[1] * oppositeCorner[1]) {
+            int distanceToCenter = scaleFactor * deltaX * deltaX + deltaY * deltaY;
+
+            if (distanceToCenter > previousDistanceToCenter) {
+                previousDistanceToCenter = distanceToCenter;
                 oppositeCorner[0] = cell[0];
                 oppositeCorner[1] = cell[1];
             }
@@ -71,6 +90,7 @@ public class BasicBot implements Bot {
             if (gamemode.getTurn() == playerNumber) {
                 int[] move = getBestMove();
                 if (move != null && goodMovesAviableFlag) {
+                    System.out.println("Bot " + playerNumber + " is making move: " + Arrays.toString(move));
                     gameroom.processMove(move[0], move[1], move[2], move[3]);
                 } else {
                     gameroom.processPass();
@@ -158,6 +178,8 @@ public class BasicBot implements Bot {
                 }
             }
         }
+
+        System.out.println("Bot " + playerNumber + " is considering moves: " + Arrays.deepToString(bestMoves.toArray()) + " with score: " + bestMoveScore);
 
         return bestMoves.get(rand.nextInt(bestMoves.size()));
     }
