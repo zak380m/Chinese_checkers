@@ -53,7 +53,8 @@ public class Mediator {
     
     public GameRoom loadRoom(int GameId, String password) {
         Game game = getGame(GameId);
-        gameBuilder.setGameName(game.getGamemode());
+        gameBuilder.setGamemodeName(game.getGamemode());
+        gameBuilder.setBoardName(game.getBoard());
         GamemodeBuilder gamemodeBuilder = gameBuilder.getGamemodeBuilder();
         BoardBuilder boardBuilder = gameBuilder.getBoardBuilder();
         boardBuilder.buildBoard(game.getPlayerNumber());
