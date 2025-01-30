@@ -108,7 +108,9 @@ package zak380mGazyli {
         + void startServer()
         + synchronized GameRoom createGameRoom(Gamemode gamemode, Board board, String password, int numberOfPlayers, int numberOfBots, Game game)
         + synchronized GameRoom joinGameRoom(String password)
+        + synchronized GameRoom loadGameRoom(int gameID, String password)
         + synchronized void deleteGameRoom(GameRoom room)
+        + synchronized void deleteGameByID(int gameID)
     }
 }
 
@@ -120,13 +122,126 @@ package zak380mGazyli.Displays {
     }
 }
 
+package zak380mGazyli.Database.Models {
+    class Game {
+        - int id
+        - String gamemode
+        - String board
+        - Timestamp createdAt
+        - int playerNumber
+        - List<Move> moves
+        + Game()
+        + Game(String gamemode, String board, int playerNumber)
+        + int getId()
+        + String getGamemode()
+        + void setGamemode(String gamemode)
+        + String getBoard()
+        + void setBoard(String board)
+        + Timestamp getCreatedAt()
+        + int getPlayerNumber()
+        + void setPlayerNumber(int playerNumber)
+    }
+
+    class Move {
+        - Game game
+        - int turnNumber
+        - int startX
+        - int startY
+        - int endX
+        - int endY
+        - boolean isPass
+        - Timestamp moveTimestamp
+        + Move()
+        + Move(Game game, int turnNumber, int startX, int startY, int endX, int endY, boolean isPass)
+        + Game getGame()
+        + void setGame(Game game)
+        + int getTurnNumber()
+        + void setTurnNumber(int turnNumber)
+        + int getStartX()
+        + void setStartX(int startX)
+        + int getStartY()
+        + void setStartY(int startY)
+        + int getEndX()
+        + void setEndX(int endX)
+        + int getEndY()
+        + void setEndY(int endY)
+        + boolean isPass()
+        + void setPass(boolean pass)
+        + Timestamp getMoveTimestamp()
+        + void setMoveTimestamp(Timestamp moveTimestamp)
+    }
+
+    class MoveId {
+        - int game
+        - int turnNumber
+        + MoveId()
+        + MoveId(int game, int turnNumber)
+        + boolean equals(Object o)
+        + int hashCode()
+        + int getGame()
+        + void setGame(int game)
+        + int getTurnNumber()
+        + void setTurnNumber(int turnNumber)
+    }
+}
+
+package zak380mGazyli.Database.Repositories {
+    interface MoveRepository {
+        List<Move> findByGameId(int gameId)
+    }
+
+    interface GameRepository {
+    }
+}
+
+package zak380mGazyli.Database.Service {
+    class MoveService {
+        + List<Move> getAllMoves()
+        + Move getGame(MoveId id)
+        + Move createMove(Move move)
+        + void deleteMove(MoveId id)
+        + List<Move> getMovesByGameId(int gameId)
+    }
+
+    class GameService {
+        + List<Game> getAllGames()
+        + Game getGame(int id)
+        + Game createGame(Game game)
+        + void deleteGame(int id)
+    }
+}
+
+package zak380mGazyli {
+    class Mediator {
+        - GameService gameService
+        - MoveService moveService
+        - GameBuilder gameBuilder
+        - Server server
+        + Mediator(GameService gameService, MoveService moveService)
+        + void setServer(Server server)
+        + void addGame(Game game)
+        + void addMove(Move move)
+        + void deleteGame(int gameID)
+        + GameRoom loadRoom(int GameId, String password)
+        + void playGame(GameRoom room)
+    }
+}
+
 zak380mGazyli.Server *-- zak380mGazyli.PlayersHandling.GameRoom
 zak380mGazyli.PlayersHandling.GameRoom *-- zak380mGazyli.PlayersHandling.PlayerHandler
 zak380mGazyli.PlayersHandling.GameRoom *-- zak380mGazyli.Bots.Bot
+zak380mGazyli.PlayersHandling.GameRoom *-- zak380mGazyli.Database.Models.Game
 zak380mGazyli.PlayersHandling.PlayerHandler ..|> Runnable
 zak380mGazyli.Bots.Bot ..|> Runnable
 zak380mGazyli.Client *-- zak380mGazyli.Displays.Display
 zak380mGazyli.Server *-- zak380mGazyli.Gamemodes.Gamemode
 zak380mGazyli.Server *-- zak380mGazyli.Boards.Board
+zak380mGazyli.Database.Models.Game *-- zak380mGazyli.Database.Models.Move
+zak380mGazyli.Database.Models.Move *-- zak380mGazyli.Database.Models.MoveId
+zak380mGazyli.Database.Service.MoveService *-- zak380mGazyli.Database.Repositories.MoveRepository
+zak380mGazyli.Database.Service.GameService *-- zak380mGazyli.Database.Repositories.GameRepository
+zak380mGazyli.Mediator *-- zak380mGazyli.Database.Service.GameService
+zak380mGazyli.Mediator *-- zak380mGazyli.Database.Service.MoveService
+zak380mGazyli.Mediator *-- zak380mGazyli.Server
 
 @enduml
