@@ -143,7 +143,7 @@ public class GUIApp extends Application {
         Platform.runLater(() -> {
             if (primaryStage != null) {
                 if (player == playerNumber) {
-                    primaryStage.setTitle("Chinese Checkers (" + gameID + ") - " + playerColor + " - your move!");
+                    primaryStage.setTitle("Chinese Checkers (ID: " + gameID + ") - " + playerColor + " - your move!");
                     primaryStage.toFront();
                 } else {
                     primaryStage.setTitle("Chinese Checkers (ID: " + gameID + ") - Player " + player + "'s turn.");

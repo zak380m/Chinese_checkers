@@ -40,19 +40,19 @@ public class GameWonPopup {
         infoLabel.setTextAlignment(TextAlignment.CENTER);
 
         Button spectateButton = new Button("Spectate");
+        spectateButton.setPrefWidth(100);
         spectateButton.setOnAction(e -> {
             popupStage.close();
         });
 
         Button leaveButton = new Button("Leave");
+        leaveButton.setPrefWidth(100);
         leaveButton.setOnAction(e -> {
             GUIDisplay.setCurrentCommand(new Command("quit"));
             popupStage.close();
         });
 
-        HBox buttonBox = new HBox(10, spectateButton, leaveButton);
-
-        VBox gameFinishedBox = new VBox(10, infoLabel, buttonBox);
+        VBox gameFinishedBox = new VBox(10, infoLabel, spectateButton, leaveButton);
         gameFinishedBox.setPadding(new Insets(10));
         gameFinishedBox.setAlignment(Pos.CENTER);
 
