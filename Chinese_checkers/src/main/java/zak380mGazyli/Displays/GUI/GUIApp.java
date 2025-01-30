@@ -82,6 +82,11 @@ public class GUIApp extends Application {
         });
     }
 
+    /**
+     * Sets the game ID.
+     *
+     * @param gameID The ID of the game.
+     */
     public static void setGameID(int gameID) {
         if (gameID != 0 && GUIApp.gameID == 0) {
             GUIApp.gameID = gameID;

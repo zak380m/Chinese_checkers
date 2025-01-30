@@ -9,6 +9,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * BasicBot is a class that implements the Bot interface and provides basic functionality for a bot player in a game.
+ */
 public class BasicBot implements Bot {
     private GameRoom gameroom;
     private Gamemode gamemode;
@@ -26,6 +29,14 @@ public class BasicBot implements Bot {
     private final Random rand = new Random();
     private final List<int[]> unmovablePawns = new ArrayList<>();
 
+    /**
+     * Sets the game parameters for the bot.
+     *
+     * @param gameroom the game room
+     * @param gamemode the game mode
+     * @param board the game board
+     * @param playerNumber the player number assigned to the bot
+     */
     public void setGame(GameRoom gameroom, Gamemode gamemode, Board board, int playerNumber) {
         this.gameroom = gameroom;
         this.gamemode = gamemode;
@@ -41,13 +52,23 @@ public class BasicBot implements Bot {
         this.OriginalTargetCell = findTargetCell();
     }
 
+    /**
+     * Calculates the scale factor based on the board dimensions.
+     *
+     * @return the scale factor
+     */
     private int calculateScaleFactor() {
         double rows = board.getBoard().length;
         double columns = board.getBoard()[0].length;
         double ratio = columns / rows;
-        return (int) Math.ceil(ratio*ratio);
+        return (int) Math.ceil(ratio * ratio);
     }
 
+    /**
+     * Gets the starting area number for the bot.
+     *
+     * @return the starting area number
+     */
     private int getStartingAreaNumber() {
         for (int i = 1; i <= startingAreasAmount; i++) {
             if (board.getBoard()[board.getStartArea(i)[0][0]][board.getStartArea(i)[0][1]].getColor().equals(color)) {
@@ -58,13 +79,23 @@ public class BasicBot implements Bot {
         return -1;
     }
 
+    /**
+     * Finds the opposite starting area for the bot.
+     *
+     * @return the coordinates of the opposite starting area
+     */
     private int[][] findOppositeStartingArea() {
         int playerStartingAreaNumber = getStartingAreaNumber();
-        int oppositeStartingAreaNumber = ((playerStartingAreaNumber - 1)+ startingAreasAmount / 2) % startingAreasAmount + 1;
+        int oppositeStartingAreaNumber = ((playerStartingAreaNumber - 1) + startingAreasAmount / 2) % startingAreasAmount + 1;
         System.out.println("Bot " + playerNumber + " is opposite to area: " + oppositeStartingAreaNumber);
         return board.getStartArea(oppositeStartingAreaNumber);
     }
 
+    /**
+     * Finds the target cell for the bot to move towards.
+     *
+     * @return the coordinates of the target cell
+     */
     private int[] findTargetCell() {
         int[] targetCell = new int[2];
 
@@ -88,6 +119,9 @@ public class BasicBot implements Bot {
         return targetCell;
     }
 
+    /**
+     * Runs the bot's main loop, making moves when it is the bot's turn.
+     */
     public void run() {
         while (isConnected) {
             if (gamemode.getTurn() == playerNumber) {
@@ -106,6 +140,11 @@ public class BasicBot implements Bot {
         }
     }
 
+    /**
+     * Gets the coordinates of the bot's pawns.
+     *
+     * @return a 2D array of pawn coordinates
+     */
     private int[][] getPawnCoordinates() {
         if (color == null) {
             return null;
@@ -128,12 +167,18 @@ public class BasicBot implements Bot {
         return pawnsCoordinates;
     }
 
+    /**
+     * Evaluates a move based on the distance moved and the distance moved towards the target cell.
+     *
+     * @param pawnCoordinates the coordinates of the pawn
+     * @param targetCoordinates the coordinates of the target cell
+     * @return the score of the move
+     */
     private int evaluateMove(int[] pawnCoordinates, int[] targetCoordinates) {
         int deltaX = Math.abs(pawnCoordinates[0] - targetCoordinates[0]);
         int deltaY = Math.abs(pawnCoordinates[1] - targetCoordinates[1]);
 
         int distanceMoved = scaleFactor * deltaX * deltaX + deltaY * deltaY;
-
 
         int startDeltaXToTargetCell = Math.abs(pawnCoordinates[0] - targetCell[0]);
         int startDeltaYToTargetCell = Math.abs(pawnCoordinates[1] - targetCell[1]);
@@ -147,7 +192,6 @@ public class BasicBot implements Bot {
 
         int distanceMovedTowardsTargetCell = startDistanceToTargetCell - endDistanceToTargetCell;
 
-
         int startDeltaXToOriginalTargetCell = Math.abs(pawnCoordinates[0] - OriginalTargetCell[0]);
         int startDeltaYToOriginalTargetCell = Math.abs(pawnCoordinates[1] - OriginalTargetCell[1]);
 
@@ -159,7 +203,6 @@ public class BasicBot implements Bot {
         int endDistanceToOriginalTargetCell = scaleFactor * endDeltaXToOriginalTargetCell * endDeltaXToOriginalTargetCell + endDeltaYToOriginalTargetCell * endDeltaYToOriginalTargetCell;
 
         int distanceMovedTowardsOriginalTargetCell = startDistanceToOriginalTargetCell - endDistanceToOriginalTargetCell;
-
 
         if ((distanceMovedTowardsTargetCell + distanceMovedTowardsOriginalTargetCell) / 2 <= 0) {
             return 0;
@@ -174,6 +217,11 @@ public class BasicBot implements Bot {
         return distanceMoved + (distanceMovedTowardsTargetCell + distanceMovedTowardsOriginalTargetCell) / 2;
     }
 
+    /**
+     * Gets the best move for the bot based on the evaluation of possible moves.
+     *
+     * @return the coordinates of the best move
+     */
     private int[] getBestMove() {
         targetCell = findTargetCell();
 

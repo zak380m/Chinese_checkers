@@ -26,10 +26,18 @@ public class Server{
     @Autowired
     private Mediator mediator;
 
+    /**
+     * The main method to start the Spring Boot application.
+     *
+     * @param args Command line arguments.
+     */
     public static void main(String[] args) {
         SpringApplication.run(Server.class, args);
     }
 
+    /**
+     * Initializes the server after the Spring context is loaded.
+     */
     @PostConstruct
     public void init() {
         try {
@@ -68,6 +76,7 @@ public class Server{
      * @param password The password for the new room.
      * @param numberOfPlayers The number of players in the new room.
      * @param numberOfBots The number of bots in the new room.
+     * @param game The game instance associated with the room.
      * @return The created GameRoom instance.
      */
     public synchronized GameRoom createGameRoom(Gamemode gamemode, Board board, String password, int numberOfPlayers, int numberOfBots, Game game) {
@@ -86,6 +95,14 @@ public class Server{
         return newRoom;
     }
 
+    /**
+     * Saves the game to the database.
+     *
+     * @param gamemode The game mode.
+     * @param board The board.
+     * @param numberOfPlayers The number of players.
+     * @return The saved Game instance.
+     */
     private Game saveGameToDatabase(Gamemode gamemode, Board board, int numberOfPlayers) {
         try {
             Game newGame = new Game(gamemode.getName(), board.getName(), numberOfPlayers);
@@ -99,7 +116,7 @@ public class Server{
     }
 
     /**
-     * Joins an existing game room with the specified game name and password.
+     * Joins an existing game room with the specified password.
      *
      * @param password The password for the game room.
      * @return The joined GameRoom instance, or null if no matching room is found.
@@ -113,6 +130,13 @@ public class Server{
         return null;
     }
 
+    /**
+     * Loads an existing game room with the specified game ID and password.
+     *
+     * @param gameID The ID of the game.
+     * @param password The password for the game room.
+     * @return The loaded GameRoom instance, or null if no matching room is found.
+     */
     public synchronized GameRoom loadGameRoom(int gameID, String password) {
         for (int i = 1; i <= roomCounter; i++) {
             if (gameRooms.get(i).getGame().getId() == gameID) {
@@ -148,6 +172,11 @@ public class Server{
         }
     }
 
+    /**
+     * Deletes a game by its ID.
+     *
+     * @param gameID The ID of the game to delete.
+     */
     public synchronized void deleteGameByID(int gameID) {
         mediator.deleteGame(gameID);
     }

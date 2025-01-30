@@ -130,6 +130,11 @@ public class DummyGamemode implements Gamemode {
         return turn;
     }
 
+    /**
+     * Sets the turn count.
+     *
+     * @param turnCount The turn count.
+     */
     @Override
     public void setTurnCount(int turnCount) {
         this.turn = turnCount;

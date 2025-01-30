@@ -61,10 +61,20 @@ public class SetUp extends Command {
         this.create = create;
     }
 
+    /**
+     * Sets whether to load an existing game.
+     *
+     * @param load true to load an existing game, false otherwise.
+     */
     public void setLoad(boolean load) {
         this.load = load;
     }
 
+    /**
+     * Sets the game ID.
+     *
+     * @param gameId The ID of the game.
+     */
     public void setGameId(int gameId) {
         this.gameId = gameId;
     }
@@ -123,10 +133,20 @@ public class SetUp extends Command {
         return create;
     }
 
+    /**
+     * Checks if an existing game is to be loaded.
+     *
+     * @return true if an existing game is to be loaded, false otherwise.
+     */
     public boolean isLoad() {
         return load;
     }
 
+    /**
+     * Gets the game ID.
+     *
+     * @return The ID of the game.
+     */
     public int getGameId() {
         return gameId;
     }

@@ -349,6 +349,11 @@ public class SuperGamemode implements Gamemode {
         return turnCount;
     }
 
+    /**
+     * Sets the turn count.
+     *
+     * @param turnCount The turn count.
+     */
     @Override
     public void setTurnCount(int turnCount) {
         this.turnCount = turnCount;
