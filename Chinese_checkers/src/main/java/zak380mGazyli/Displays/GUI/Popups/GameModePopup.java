@@ -57,8 +57,8 @@ public class GameModePopup {
         roomName.setPrefWidth(100);
 
         TextField gameID = new TextField();
-        roomName.setPromptText("Game ID");
-        roomName.setPrefWidth(100);
+        gameID.setPromptText("Game ID");
+        gameID.setPrefWidth(100);
 
         ComboBox<String> gamemodeChooser = new ComboBox<>(observableArrayList(gamemodes));
 
@@ -114,6 +114,7 @@ public class GameModePopup {
         Scene configScene = new Scene(vboxConfig);
 
         Button createButton = new Button("Create Room");
+        createButton.setPrefWidth(100);
         createButton.setOnAction(e -> {
             setCreate(true);
             setLoad(false);
@@ -129,6 +130,7 @@ public class GameModePopup {
         });
 
         Button joinButton = new Button("Join Room");
+        joinButton.setPrefWidth(100);
         joinButton.setOnAction(e -> {
             setCreate(false);
             setLoad(false);
@@ -136,6 +138,7 @@ public class GameModePopup {
         });
 
         Button loadButton = new Button("Load game");
+        loadButton.setPrefWidth(100);
         loadButton.setOnAction(e -> {
             setCreate(false);
             setLoad(true);
