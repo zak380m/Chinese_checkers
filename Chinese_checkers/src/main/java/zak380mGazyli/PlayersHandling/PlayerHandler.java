@@ -18,6 +18,10 @@ import zak380mGazyli.Messages.ErrorMessage;
 import zak380mGazyli.Messages.Message;
 import zak380mGazyli.Misc.SetUp;
 
+/**
+ * The PlayerHandler class handles the communication between the server and a player.
+ * It processes commands sent by the player and manages the player's state in the game.
+ */
 public class PlayerHandler implements Runnable {
     private Server server;
     private Socket socket;
@@ -32,6 +36,12 @@ public class PlayerHandler implements Runnable {
     private volatile boolean isReady;
     private GameBuilder gameBuilder;
 
+    /**
+     * Constructs a PlayerHandler instance.
+     *
+     * @param socket The socket for communication with the player.
+     * @param server The server managing the game.
+     */
     public PlayerHandler(Socket socket, Server server) {
         this.socket = socket;
         this.server = server;
@@ -48,10 +58,16 @@ public class PlayerHandler implements Runnable {
         initializeCommands();
     }
 
+    /**
+     * Interface for handling commands.
+     */
     private interface CommandHandler {
         void handle(Command command);
     }
 
+    /**
+     * Initializes the command handlers.
+     */
     private void initializeCommands() {
         commandHandlers = new HashMap<>();
 
@@ -62,6 +78,10 @@ public class PlayerHandler implements Runnable {
         commandHandlers.put("message", this::handleMessageCommand);
     }
 
+    /**
+     * The main run method for the PlayerHandler thread.
+     * It listens for commands from the player and processes them.
+     */
     @Override
     public void run() {
         try {
@@ -93,6 +113,11 @@ public class PlayerHandler implements Runnable {
         }
     }
 
+    /**
+     * Handles the move command from the player.
+     *
+     * @param command The move command.
+     */
     private void handleMoveCommand(Command command) {
         if (command.getArgs().length == 4) {
             int startX = command.getArgs()[0];
@@ -112,6 +137,11 @@ public class PlayerHandler implements Runnable {
         }
     }
 
+    /**
+     * Handles the pass command from the player.
+     *
+     * @param command The pass command.
+     */
     private void handlePassCommand(Command command) {
         if (gamemode.getTurn() == playerNumber) {
             room.processPass();
@@ -121,14 +151,29 @@ public class PlayerHandler implements Runnable {
         }
     }
 
+    /**
+     * Handles the display command from the player.
+     *
+     * @param command The display command.
+     */
     private void handleDisplayCommand(Command command) {
         sendJsonReply(room.currentGameState(playerNumber));
     }
 
+    /**
+     * Handles the quit command from the player.
+     *
+     * @param command The quit command.
+     */
     private void handleQuitCommand(Command command) {
         isConnected = false;
     }
 
+    /**
+     * Handles the message command from the player.
+     *
+     * @param command The message command.
+     */
     private void handleMessageCommand(Command command) {
         if (command.getArgs().length == 1 && command.getTextArg() != null) {
             if (command.getArgs()[0] == -1) {
@@ -146,6 +191,11 @@ public class PlayerHandler implements Runnable {
         }
     }
 
+    /**
+     * Sends an error message to the player.
+     *
+     * @param message The error message to send.
+     */
     public void sendErrorMessage(String message) {
         try {
             out.writeObject(gson.toJson(new ErrorMessage(message)));
@@ -156,6 +206,11 @@ public class PlayerHandler implements Runnable {
         }
     }
 
+    /**
+     * Sends a JSON reply to the player.
+     *
+     * @param jsonReply The JSON reply to send.
+     */
     public void sendJsonReply(String jsonReply) {
         try {
             out.writeObject(jsonReply);
@@ -166,6 +221,9 @@ public class PlayerHandler implements Runnable {
         }
     }
 
+    /**
+     * Handles the disconnection of the player.
+     */
     public void handleDisconnection() {
         if(room != null) room.removePlayer(playerNumber);
         isConnected = false;
@@ -176,16 +234,33 @@ public class PlayerHandler implements Runnable {
         }
     }
 
+    /**
+     * Gets the player number.
+     *
+     * @return The player number.
+     */
     public int getPlayerNumber() {
         return playerNumber;
     }
 
+    /**
+     * Sets the player in the room.
+     *
+     * @param playerNumber The player number.
+     * @param room The game room.
+     * @param gamemode The game mode.
+     */
     public void setPlayerInRoom(int playerNumber, GameRoom room, Gamemode gamemode) {
         this.playerNumber = playerNumber;
         this.room = room;
         this.gamemode = gamemode;
     }
 
+    /**
+     * Sends the setup configuration to the player.
+     *
+     * @param setUp The setup configuration.
+     */
     public void sendSetUp(SetUp setUp) {
         System.out.println("Sending setup to player");
         try {
@@ -196,6 +271,11 @@ public class PlayerHandler implements Runnable {
         }
     }
 
+    /**
+     * Gets the setup configuration from the player.
+     *
+     * @return The setup configuration.
+     */
     public SetUp getSetUp() {
         System.out.println("Getting setup from player");
         try {
@@ -212,6 +292,9 @@ public class PlayerHandler implements Runnable {
         return null;
     }
 
+    /**
+     * Handles the player getting ready for the game.
+     */
     private void gettingReady() {
         try {
             SetUp setUp = new SetUp(gameBuilder.getGamemodesList(), gameBuilder.getBoardsList());
@@ -236,6 +319,16 @@ public class PlayerHandler implements Runnable {
         }
     }
 
+    /**
+     * Creates a game room.
+     *
+     * @param gamemodeName The name of the game mode.
+     * @param boardName The name of the board.
+     * @param playerCount The number of players.
+     * @param botCount The number of bots.
+     * @param password The password for the game room.
+     * @return true if the game room was created successfully, false otherwise.
+     */
     public boolean createGameRoom(String gamemodeName, String boardName, int playerCount, int botCount, String password) {
         System.out.println("Setting up gamemode: " + gamemodeName);
         gameBuilder.setGamemodeName(gamemodeName);

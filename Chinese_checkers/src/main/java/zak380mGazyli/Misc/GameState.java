@@ -112,6 +112,11 @@ public class GameState {
         return currentPlayerTurn;
     }
 
+    /**
+     * Gets the game ID.
+     *
+     * @return The game ID.
+     */
     public int getGameID() {
         return gameID;
     }

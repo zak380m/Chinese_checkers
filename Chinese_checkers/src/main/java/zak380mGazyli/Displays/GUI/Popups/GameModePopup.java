@@ -61,13 +61,11 @@ public class GameModePopup {
         gameID.setPrefWidth(100);
 
         ComboBox<String> gamemodeChooser = new ComboBox<>(observableArrayList(gamemodes));
-
         gamemodeChooser.setPromptText("Gamemode");
         gamemodeChooser.getSelectionModel().select(1);
         gamemodeChooser.setPrefWidth(100);
 
         ComboBox<String> boardChooser = new ComboBox<>(observableArrayList(boards));
-
         boardChooser.setPromptText("Board");
         boardChooser.getSelectionModel().select(0);
         boardChooser.setPrefWidth(100);
@@ -90,12 +88,11 @@ public class GameModePopup {
 
         playerNumber.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.ENTER) {
-                handleStartButtonAction(popupStage, roomName, gameID, gamemodeChooser, boardChooser, playerNumber,  botNumber);
+                handleStartButtonAction(popupStage, roomName, gameID, gamemodeChooser, boardChooser, playerNumber, botNumber);
             }
         });
 
         GridPane gridConfig = new GridPane();
-
         gridConfig.setHgap(10);
         gridConfig.setVgap(10);
 
@@ -109,7 +106,6 @@ public class GameModePopup {
         VBox vboxConfig = new VBox(10, gridConfig, startButton);
         vboxConfig.setPadding(new Insets(10));
         vboxConfig.setAlignment(Pos.CENTER);
-
 
         Scene configScene = new Scene(vboxConfig);
 
@@ -159,6 +155,18 @@ public class GameModePopup {
         popupStage.show();
     }
 
+    /**
+     * Handles the action when the start button is pressed.
+     * Sets up the game configuration based on user input and closes the popup.
+     *
+     * @param popupStage The stage of the popup window.
+     * @param roomName The text field for the room name.
+     * @param gameID The text field for the game ID.
+     * @param gamemodeChooser The combo box for selecting the game mode.
+     * @param boardChooser The combo box for selecting the board.
+     * @param playerNumber The text field for the number of players.
+     * @param botNumber The text field for the number of bots.
+     */
     private void handleStartButtonAction(Stage popupStage, TextField roomName, TextField gameID, ComboBox<String> gamemodeChooser, ComboBox<String> boardChooser, TextField playerNumber, TextField botNumber) {
         try {
             SetUp setUp = new SetUp();
@@ -204,10 +212,20 @@ public class GameModePopup {
         return create;
     }
 
+    /**
+     * Sets the load flag indicating whether to load an existing game.
+     *
+     * @param load The load flag.
+     */
     private void setLoad(Boolean load) {
         this.load = load;
     }
 
+    /**
+     * Gets the load flag indicating whether to load an existing game.
+     *
+     * @return The load flag.
+     */
     private Boolean getLoad() {
         return load;
     }

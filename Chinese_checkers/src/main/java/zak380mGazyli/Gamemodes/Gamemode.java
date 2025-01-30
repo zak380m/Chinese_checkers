@@ -80,6 +80,11 @@ public interface Gamemode {
      */
     public int getTurnCount();
 
+    /**
+     * Sets the turn count.
+     *
+     * @param turnCount The turn count.
+     */
     public void setTurnCount(int turnCount);
 
     /**
